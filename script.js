@@ -1,7 +1,6 @@
 /* ============================================================
-   NEXUS VAULT — Application Logic
-   Real wallet connection + live balance tracking
-   + Phrase import (local testing) + QR demo
+   NEXUS VAULT — Complete application logic
+   Real wallet connection: extension · phrase import · WalletConnect QR
    ============================================================ */
 
 const $ = id => document.getElementById(id);
@@ -12,14 +11,8 @@ const $ = id => document.getElementById(id);
 const drawer = $('drawer');
 const overlay = $('overlay');
 
-function openDrawer(){
-  drawer.classList.add('active');
-  overlay.classList.add('active');
-}
-function closeDrawer(){
-  drawer.classList.remove('active');
-  overlay.classList.remove('active');
-}
+function openDrawer(){ drawer.classList.add('active'); overlay.classList.add('active'); }
+function closeDrawer(){ drawer.classList.remove('active'); overlay.classList.remove('active'); }
 
 $('brandMenu').onclick = openDrawer;
 $('closeDrawer').onclick = closeDrawer;
@@ -29,11 +22,9 @@ function showPage(page){
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   const target = document.getElementById(page);
   if (target) target.classList.add('active');
-
   document.querySelectorAll('.drawer-link').forEach(b => {
     b.classList.toggle('active', b.dataset.page === page);
   });
-
   closeDrawer();
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
@@ -51,7 +42,6 @@ $('settingsShortcut').onclick = () => showPage('settings');
 // THEME
 // ============================================================
 const themeSetting = $('themeSetting');
-
 function applyTheme(theme){
   document.body.classList.toggle('light', theme === 'light');
   if (themeSetting) themeSetting.value = theme;
@@ -116,7 +106,6 @@ $('currencyLabel').textContent = localCurrency + ' · LOCAL DISPLAY';
 // EXCHANGE RATES
 // ============================================================
 let exchangeRates = { USD: 1 };
-
 async function loadExchangeRates(){
   try {
     const res = await fetch('https://open.er-api.com/v6/latest/USD');
@@ -126,9 +115,7 @@ async function loadExchangeRates(){
       exchangeRates = data.rates;
       updatePortfolioDisplay();
     }
-  } catch(e){
-    console.warn('Exchange rates unavailable. USD only.');
-  }
+  } catch(e){ console.warn('Exchange rates unavailable'); }
 }
 loadExchangeRates();
 
@@ -162,82 +149,74 @@ function loadConnected(){
       const parsed = JSON.parse(raw);
       if (Array.isArray(parsed)) connectedWallets = parsed;
     }
-  } catch(e){
-    connectedWallets = [];
-  }
+  } catch(e){ connectedWallets = []; }
 }
 function saveConnected(){
   try { localStorage.setItem('nexus-connected-wallets', JSON.stringify(connectedWallets)); }
-  catch(e){ console.warn('Could not save connected wallets', e); }
+  catch(e){ console.warn('Could not save'); }
 }
 
 // ============================================================
-// WALLET PROVIDERS (official browser APIs)
+// WALLETCONNECT PROJECT ID
+// ============================================================
+let wcProjectId = localStorage.getItem('nexus-wc-project-id') || '';
+if (wcProjectId && $('wcProjectIdInput')) $('wcProjectIdInput').value = wcProjectId;
+
+$('wcProjectIdSave').addEventListener('click', () => {
+  const input = $('wcProjectIdInput');
+  const val = input.value.trim();
+  if (!val){
+    showToast('Enter a project ID first.', 'error');
+    return;
+  }
+  wcProjectId = val;
+  try { localStorage.setItem('nexus-wc-project-id', val); } catch(e){}
+  showToast('✓ WalletConnect Project ID saved.', 'success', 3000);
+});
+
+// ============================================================
+// PROVIDERS (browser extensions)
 // ============================================================
 const providers = {
   'MetaMask': {
     chain: 'ethereum',
     detect: () => typeof window.ethereum !== 'undefined' && window.ethereum.isMetaMask,
-    connect: async () => {
-      const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-      return accounts[0];
-    }
+    connect: async () => (await window.ethereum.request({ method: 'eth_requestAccounts' }))[0]
   },
   'Coinbase Wallet': {
     chain: 'ethereum',
     detect: () => typeof window.coinbaseWalletExtension !== 'undefined',
-    connect: async () => {
-      const accounts = await window.coinbaseWalletExtension.request({ method: 'eth_requestAccounts' });
-      return accounts[0];
-    }
+    connect: async () => (await window.coinbaseWalletExtension.request({ method: 'eth_requestAccounts' }))[0]
   },
   'Brave Wallet': {
     chain: 'ethereum',
     detect: () => typeof window.ethereum !== 'undefined' && window.ethereum.isBraveWallet,
-    connect: async () => {
-      const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-      return accounts[0];
-    }
+    connect: async () => (await window.ethereum.request({ method: 'eth_requestAccounts' }))[0]
   },
   'Rabby Wallet': {
     chain: 'ethereum',
     detect: () => typeof window.ethereum !== 'undefined' && window.ethereum.isRabby,
-    connect: async () => {
-      const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-      return accounts[0];
-    }
+    connect: async () => (await window.ethereum.request({ method: 'eth_requestAccounts' }))[0]
   },
   'Phantom': {
     chain: 'solana',
     detect: () => typeof window.solana !== 'undefined' && window.solana.isPhantom,
-    connect: async () => {
-      const resp = await window.solana.connect();
-      return resp.publicKey.toString();
-    }
+    connect: async () => (await window.solana.connect()).publicKey.toString()
   },
   'Solflare': {
     chain: 'solana',
     detect: () => typeof window.solflare !== 'undefined',
-    connect: async () => {
-      const resp = await window.solflare.connect();
-      return resp.publicKey.toString();
-    }
+    connect: async () => (await window.solflare.connect()).publicKey.toString()
   },
   'Backpack': {
     chain: 'solana',
     detect: () => typeof window.backpack !== 'undefined',
-    connect: async () => {
-      const resp = await window.backpack.connect();
-      return resp.publicKey.toString();
-    }
+    connect: async () => (await window.backpack.connect()).publicKey.toString()
   },
   'Unisat': {
     chain: 'bitcoin',
     detect: () => typeof window.unisat !== 'undefined',
-    connect: async () => {
-      const accounts = await window.unisat.requestAccounts();
-      return accounts[0];
-    }
+    connect: async () => (await window.unisat.requestAccounts())[0]
   }
 };
 
@@ -247,14 +226,13 @@ const providers = {
 const CHAIN_SYMBOL = { ethereum: 'ETH', solana: 'SOL', bitcoin: 'BTC' };
 
 async function fetchEthBalance(address){
-  if (window.ethereum){
+  if (window.ethereum && window.ethereum.isMetaMask){
     try {
       const hex = await window.ethereum.request({
-        method: 'eth_getBalance',
-        params: [address, 'latest']
+        method: 'eth_getBalance', params: [address, 'latest']
       });
       return parseInt(hex, 16) / 1e18;
-    } catch(_){ /* fall through */ }
+    } catch(_){}
   }
   const res = await fetch('https://eth.llamarpc.com', {
     method: 'POST',
@@ -323,102 +301,16 @@ async function fetchPrices(){
 }
 
 // ============================================================
-// CONNECTION FLOW (browser provider)
+// ADD WALLET (shared by all methods)
 // ============================================================
-const inFlight = new Set();
+async function addWalletToPortfolio(address, providerName, chain, opts = {}){
+  const normalizedAddr = (chain === 'ethereum') ? address.toLowerCase() : address;
 
-async function connectWallet(walletName, chain){
-  if (inFlight.has(walletName)) return;
-
-  const provider = providers[walletName];
-
-  if (!provider){
-    showToast(
-      walletName + ' browser integration is not available in NEXUS VAULT. ' +
-      'Use "Import Phrase / Private Key" or "QR Connect (Demo)" for testing, ' +
-      'or connect MetaMask / Coinbase / Brave / Rabby / Phantom / Solflare / Backpack / Unisat directly.',
-      'info', 7000
-    );
-    return;
-  }
-
-  if (!provider.detect()){
-    showToast(
-      walletName + ' was not detected in this browser. ' +
-      'Install the official ' + walletName + ' extension, unlock it, and refresh.',
-      'error', 6500
-    );
-    return;
-  }
-
-  const card = document.querySelector('.wallet-card[data-wallet-name="' + CSS.escape(walletName) + '"]');
-  inFlight.add(walletName);
-  card?.classList.add('connecting');
-  const spinner = document.createElement('div');
-  spinner.className = 'spinner';
-  card?.appendChild(spinner);
-
-  try {
-    showToast('Requesting connection to ' + walletName + '...', 'info', 3000);
-    const address = await provider.connect();
-    if (!address) throw new Error('No address returned.');
-
-    if (connectedWallets.some(w =>
-      w.address.toLowerCase() === address.toLowerCase() && w.chain === chain
-    )){
-      showToast('This wallet is already connected.', 'info', 3500);
-      return;
-    }
-
-    if (!pricesLastUpdated || Date.now() - pricesLastUpdated > 60000){
-      await fetchPrices();
-    }
-
-    const wallet = {
-      address,
-      provider: walletName,
-      chain,
-      balance: 0,
-      balanceUSD: 0,
-      symbol: CHAIN_SYMBOL[chain] || '',
-      connectedAt: Date.now()
-    };
-
-    try {
-      const bal = await fetchBalance(chain, address);
-      wallet.balance = bal;
-      wallet.balanceUSD = bal * (prices[wallet.symbol] || 0);
-    } catch(e){
-      console.warn('Balance fetch failed:', e);
-    }
-
-    connectedWallets.push(wallet);
-    saveConnected();
-    renderConnectedWallets();
-    renderDashboard();
-    renderWalletDirectory();
-    showToast('✓ ' + walletName + ' connected successfully!', 'success', 3500);
-
-  } catch(err){
-    console.warn('Connection error:', err);
-    if (err?.code === 4001 || err?.code === 'ACTION_REJECTED'){
-      showToast('Connection request was rejected in your wallet.', 'error', 4000);
-    } else {
-      showToast('Connection failed: ' + (err?.message || 'Unknown error'), 'error', 5000);
-    }
-  } finally {
-    inFlight.delete(walletName);
-    card?.classList.remove('connecting');
-    spinner.remove();
-  }
-}
-
-// ============================================================
-// MANUAL IMPORT (phrase / private key) — local only
-// ============================================================
-async function addManualWallet(address, providerName, chain, source){
   if (connectedWallets.some(w =>
-    w.address.toLowerCase() === address.toLowerCase() && w.chain === chain
+    ((w.chain === 'ethereum')
+      ? w.address.toLowerCase() === normalizedAddr
+      : w.address === normalizedAddr
+    ) && w.chain === chain
   )){
     showToast('This address is already connected.', 'info', 3500);
     return false;
@@ -436,24 +328,444 @@ async function addManualWallet(address, providerName, chain, source){
     balanceUSD: 0,
     symbol: CHAIN_SYMBOL[chain] || '',
     connectedAt: Date.now(),
-    imported: source === 'imported' ? true : false,
-    source: source || 'manual'
+    imported: opts.imported || false,
+    source: opts.source || 'extension'
   };
 
-  try {
-    const bal = await fetchBalance(chain, address);
-    wallet.balance = bal;
-    wallet.balanceUSD = bal * (prices[wallet.symbol] || 0);
-  } catch(e){
-    console.warn('Balance fetch failed:', e);
-  }
-
+  // Add IMMEDIATELY so user sees it works
   connectedWallets.push(wallet);
   saveConnected();
   renderConnectedWallets();
   renderDashboard();
   renderWalletDirectory();
+
+  // Then fetch balance in background
+  try {
+    const bal = await fetchBalance(chain, address);
+    wallet.balance = bal;
+    wallet.balanceUSD = bal * (prices[wallet.symbol] || 0);
+    saveConnected();
+    renderConnectedWallets();
+    renderDashboard();
+  } catch(e){
+    console.warn('Balance fetch failed for', providerName, e);
+  }
+
   return true;
+}
+
+// ============================================================
+// WALLET CONNECT MODAL
+// ============================================================
+let currentWallet = { name: '', chain: '' };
+let wcEthereumProvider = null;
+
+function openWalletConnectModal(name, chain){
+  currentWallet = { name, chain };
+
+  // Populate header
+  $('wcTitle').textContent = 'Connect ' + name;
+  $('wcSubtitle').textContent = 'Choose a connection method';
+
+  const logoEl = $('wcLogo');
+  logoEl.innerHTML = '';
+  const iconUrl = walletIconUrls[name];
+  if (iconUrl){
+    const img = document.createElement('img');
+    img.src = iconUrl;
+    img.alt = name;
+    img.style.width = '22px';
+    img.style.height = '22px';
+    img.style.objectFit = 'contain';
+    img.onerror = () => { logoEl.textContent = name.slice(0, 2).toUpperCase(); };
+    logoEl.appendChild(img);
+  } else {
+    logoEl.textContent = name.slice(0, 2).toUpperCase();
+  }
+
+  // Show/hide extension method based on detection
+  const extBtn = $('wcBtnExtension');
+  const isDetected = !!(providers[name] && providers[name].detect());
+  if (isDetected){
+    extBtn.classList.remove('disabled');
+    $('wcExtDesc').textContent = 'Detected — click to connect via ' + name;
+  } else {
+    extBtn.classList.add('disabled');
+    $('wcExtDesc').textContent = name + ' not detected in this browser';
+  }
+
+  // Reset panels
+  $('wcMethods').classList.remove('hidden');
+  $('wcPanelExtension').classList.add('hidden');
+  $('wcPanelPhrase').classList.add('hidden');
+  $('wcPanelQr').classList.add('hidden');
+
+  // Reset phrase panel
+  $('wcPhraseInput').value = '';
+  $('wcUnderstand').checked = false;
+  $('wcPhraseStatus').innerHTML = '';
+
+  openModal('walletConnectModal');
+}
+
+// Method selection
+document.querySelectorAll('.method-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    if (btn.classList.contains('disabled')) return;
+    const method = btn.dataset.method;
+    $('wcMethods').classList.add('hidden');
+
+    if (method === 'extension'){
+      $('wcPanelExtension').classList.remove('hidden');
+      runExtensionConnect();
+    } else if (method === 'phrase'){
+      $('wcPanelPhrase').classList.remove('hidden');
+      setTimeout(() => $('wcPhraseInput').focus(), 100);
+    } else if (method === 'qr'){
+      $('wcPanelQr').classList.remove('hidden');
+      runQrConnect();
+    }
+  });
+});
+
+// Back buttons
+document.querySelectorAll('[data-back-methods]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    cleanupWalletConnect();
+    $('wcMethods').classList.remove('hidden');
+    $('wcPanelExtension').classList.add('hidden');
+    $('wcPanelPhrase').classList.add('hidden');
+    $('wcPanelQr').classList.add('hidden');
+  });
+});
+
+// ============================================================
+// EXTENSION CONNECT
+// ============================================================
+async function runExtensionConnect(){
+  const name = currentWallet.name;
+  const chain = currentWallet.chain;
+  const statusEl = $('wcExtStatus');
+
+  const provider = providers[name];
+  if (!provider || !provider.detect()){
+    statusEl.innerHTML = `
+      <div class="modal-warning" style="margin:0">
+        <strong>${name} not detected.</strong><br>
+        Install the official ${name} browser extension or app, unlock it, then refresh this page.
+        <br><br>
+        You can also use <strong>Import Phrase / Private Key</strong> or <strong>Scan QR Code</strong> above.
+      </div>
+      <div class="modal-actions" style="margin-top:14px">
+        <button class="secondary-btn" data-back-methods>← Back</button>
+      </div>
+    `;
+    return;
+  }
+
+  statusEl.innerHTML = `<p style="text-align:center;font-size:11px;color:var(--muted);padding:20px 0"><span class="spinner-inline"></span>Waiting for ${name} to approve…</p>`;
+
+  try {
+    const address = await provider.connect();
+    if (!address) throw new Error('No address returned.');
+
+    showToast('Connected. Fetching balance…', 'info', 2500);
+    const added = await addWalletToPortfolio(address, name, chain, { source: 'extension' });
+
+    if (added){
+      closeModal('walletConnectModal');
+      showToast('✓ ' + name + ' connected!', 'success', 4000);
+    }
+  } catch(err){
+    console.warn('Extension connect error:', err);
+    if (err?.code === 4001 || err?.code === 'ACTION_REJECTED'){
+      statusEl.innerHTML = `<div class="modal-warning" style="margin:0">Connection rejected in ${name}.</div>
+        <div class="modal-actions" style="margin-top:14px"><button class="secondary-btn" data-back-methods>← Try another method</button></div>`;
+    } else {
+      statusEl.innerHTML = `<div class="modal-warning" style="margin:0"><strong>Connection failed:</strong> ${err?.message || 'Unknown error'}</div>
+        <div class="modal-actions" style="margin-top:14px"><button class="secondary-btn" data-back-methods>← Back</button></div>`;
+    }
+  }
+}
+
+// ============================================================
+// PHRASE IMPORT
+// ============================================================
+$('wcImportConfirm').addEventListener('click', async () => {
+  const raw = $('wcPhraseInput').value.trim();
+  const understood = $('wcUnderstand');
+  const statusEl = $('wcPhraseStatus');
+
+  const setError = (msg) => {
+    statusEl.innerHTML = `<div class="modal-warning" style="margin:0 0 10px;font-size:11px">${msg}</div>`;
+  };
+  const setInfo = (msg) => {
+    statusEl.innerHTML = `<p style="font-size:11px;color:var(--muted);margin-bottom:10px"><span class="spinner-inline"></span>${msg}</p>`;
+  };
+
+  if (!understood.checked){ setError('Please confirm you understand the warning first.'); return; }
+  if (!raw){ setError('Enter a recovery phrase or private key.'); return; }
+
+  // Check ethers availability
+  if (typeof window.ethers === 'undefined'){
+    setError('⚠️ ethers.js failed to load. Check your internet connection, then refresh the page.');
+    return;
+  }
+
+  // Only EVM chains supported for phrase import
+  if (currentWallet.chain !== 'ethereum'){
+    setError(
+      `Phrase import currently supports Ethereum & EVM wallets only. ` +
+      `${currentWallet.name} uses ${currentWallet.chain}-specific key derivation. ` +
+      `Please use the browser extension or QR code option instead.`
+    );
+    return;
+  }
+
+  try {
+    let address;
+
+    // Private key format
+    if (/^0x[0-9a-fA-F]{64}$/.test(raw)){
+      try {
+        const w = new window.ethers.Wallet(raw);
+        address = w.address;
+      } catch(e){
+        setError('Invalid private key: ' + e.message);
+        return;
+      }
+    } else {
+      // Mnemonic — normalize
+      const normalized = raw.toLowerCase().trim().replace(/\s+/g, ' ');
+      const wordCount = normalized.split(' ').length;
+
+      if (![12, 15, 18, 21, 24].includes(wordCount)){
+        setError(`Phrase contains ${wordCount} words. It must contain 12, 15, 18, 21, or 24.`);
+        return;
+      }
+
+      setInfo('Validating phrase…');
+
+      try {
+        const w = window.ethers.Wallet.fromPhrase(normalized);
+        address = w.address;
+      } catch(e){
+        setError('Invalid phrase: ' + (e.message || 'please check the spelling of your words.'));
+        return;
+      }
+    }
+
+    if (!address || !/^0x[0-9a-fA-F]{40}$/.test(address)){
+      setError('Could not derive a valid Ethereum address.');
+      return;
+    }
+
+    // Clear sensitive input immediately
+    $('wcPhraseInput').value = '';
+    $('wcUnderstand').checked = false;
+
+    setInfo('Address derived: ' + address.slice(0, 10) + '… — fetching balance…');
+
+    const added = await addWalletToPortfolio(address, currentWallet.name, 'ethereum', {
+      imported: true,
+      source: 'imported'
+    });
+
+    if (added){
+      closeModal('walletConnectModal');
+      showToast('✓ Wallet imported: ' + address.slice(0, 6) + '…' + address.slice(-4), 'success', 5000);
+    } else {
+      setError('This wallet is already connected.');
+    }
+
+  } catch(err){
+    console.error('Import error:', err);
+    $('wcPhraseInput').value = '';
+    setError('Import failed: ' + (err?.message || 'Unknown error. Check console for details.'));
+  }
+});
+
+// ============================================================
+// QR CONNECT (real WalletConnect)
+// ============================================================
+function cleanupWalletConnect(){
+  if (wcEthereumProvider){
+    try { wcEthereumProvider.disconnect(); } catch(_){}
+    wcEthereumProvider = null;
+  }
+}
+
+async function loadWalletConnectLib(){
+  if (window.EthereumProvider) return window.EthereumProvider;
+  if (window.WalletConnectEthereumProvider) return window.WalletConnectEthereumProvider;
+
+  return new Promise((resolve, reject) => {
+    const urls = [
+      'https://cdn.jsdelivr.net/npm/@walletconnect/ethereum-provider@2.17.2/dist/index.umd.js',
+      'https://unpkg.com/@walletconnect/ethereum-provider@2.17.2/dist/index.umd.js'
+    ];
+    let idx = 0;
+    const tryNext = () => {
+      if (idx >= urls.length){
+        reject(new Error('Could not load WalletConnect library. Check your internet connection.'));
+        return;
+      }
+      const url = urls[idx++];
+      const script = document.createElement('script');
+      script.src = url;
+      script.onload = () => {
+        const lib = window.EthereumProvider || window.WalletConnectEthereumProvider
+          || window.ethereumProvider || (window.WalletConnectEthereumProvider?.default);
+        if (lib) resolve(lib);
+        else tryNext();
+      };
+      script.onerror = tryNext;
+      document.head.appendChild(script);
+    };
+    tryNext();
+  });
+}
+
+async function runQrConnect(){
+  const contentEl = $('wcQrContent');
+  const chain = currentWallet.chain;
+
+  // Only EVM chains support WalletConnect here
+  if (chain !== 'ethereum'){
+    contentEl.innerHTML = `
+      <div class="modal-warning" style="margin:0 0 14px">
+        <strong>QR connection is available for EVM wallets only.</strong><br>
+        ${currentWallet.name} uses ${chain}. Please use the browser extension or phrase import instead.
+      </div>
+      <div class="modal-actions">
+        <button class="secondary-btn" data-back-methods>← Back</button>
+      </div>
+    `;
+    return;
+  }
+
+  // Check project ID
+  if (!wcProjectId){
+    contentEl.innerHTML = `
+      <div class="qr-setup">
+        <h4>📌 WalletConnect Project ID required</h4>
+        <p>
+          WalletConnect's QR connection needs a free project ID.
+          Get yours at <a href="https://cloud.walletconnect.com" target="_blank" rel="noopener">cloud.walletconnect.com</a>
+          — sign up, create a project, copy the ID. Takes about 1 minute.
+        </p>
+        <input type="text" id="qrPidInput" placeholder="Paste your WalletConnect Project ID" autocomplete="off" spellcheck="false">
+        <div class="row">
+          <button class="secondary-btn" data-back-methods style="flex:1">← Back</button>
+          <button class="primary-btn" id="qrPidSave" style="flex:1">Save & Generate QR</button>
+        </div>
+      </div>
+    `;
+
+    setTimeout(() => {
+      const input = $('qrPidInput');
+      if (input) input.focus();
+      const saveBtn = $('qrPidSave');
+      if (saveBtn){
+        saveBtn.addEventListener('click', () => {
+          const val = input.value.trim();
+          if (!val){
+            showToast('Enter a project ID.', 'error');
+            return;
+          }
+          wcProjectId = val;
+          try { localStorage.setItem('nexus-wc-project-id', val); } catch(e){}
+          if ($('wcProjectIdInput')) $('wcProjectIdInput').value = val;
+          showToast('✓ Project ID saved. Generating QR…', 'success', 2500);
+          runQrConnect();
+        });
+      }
+    }, 50);
+    return;
+  }
+
+  // Show loading
+  contentEl.innerHTML = `<p style="text-align:center;font-size:11px;color:var(--muted);padding:20px 0"><span class="spinner-inline"></span>Loading WalletConnect…</p>`;
+
+  try {
+    const EthereumProvider = await loadWalletConnectLib();
+    if (!EthereumProvider || !EthereumProvider.init){
+      throw new Error('WalletConnect library not available.');
+    }
+
+    // Init provider
+    const provider = await EthereumProvider.init({
+      projectId: wcProjectId,
+      chains: [1],
+      optionalChains: [1, 137, 56, 42161, 10, 8453],
+      showQrModal: false,
+      metadata: {
+        name: 'NEXUS VAULT',
+        description: 'Your crypto. One unified view.',
+        url: window.location.href.split('?')[0].split('#')[0],
+        icons: []
+      }
+    });
+
+    wcEthereumProvider = provider;
+
+    // Start connection to get URI
+    const { uri, approval } = await provider.connect();
+
+    // Show QR
+    contentEl.innerHTML = `
+      <div class="qr-wrapper" id="qrWrapper"></div>
+      <p class="qr-status">Scan this QR code with your mobile wallet to connect.</p>
+      <p class="qr-status" style="font-size:10px">Wallet not connecting? Try MetaMask, Trust Wallet, or Coinbase Wallet mobile apps.</p>
+      <div class="modal-actions" style="justify-content:center;margin-top:6px">
+        <button class="secondary-btn" data-back-methods>Cancel</button>
+      </div>
+    `;
+
+    // Render QR
+    if (typeof QRCode !== 'undefined'){
+      new QRCode($('qrWrapper'), {
+        text: uri,
+        width: 200,
+        height: 200,
+        colorDark: '#090b14',
+        colorLight: '#ffffff',
+        correctLevel: QRCode.CorrectLevel.M
+      });
+    } else {
+      $('qrWrapper').innerHTML = '<p style="color:#e5484d;font-size:11px;padding:20px;text-align:center">QR library not loaded</p>';
+    }
+
+    // Await approval
+    const accounts = await approval;
+    const address = accounts[0];
+
+    if (!address) throw new Error('No address from wallet.');
+
+    closeModal('walletConnectModal');
+    showToast('Wallet approved. Fetching balance…', 'info', 2500);
+
+    await addWalletToPortfolio(address, currentWallet.name + ' (WC)', 'ethereum', {
+      source: 'walletconnect'
+    });
+
+    showToast('✓ Connected via WalletConnect!', 'success', 4000);
+
+  } catch(err){
+    console.warn('WC error:', err);
+    contentEl.innerHTML = `
+      <div class="modal-warning" style="margin:0 0 14px">
+        <strong>Connection failed:</strong> ${err?.message || 'Unknown error'}<br><br>
+        Common causes:<br>
+        • Project ID is invalid or expired<br>
+        • No internet / relay unreachable<br>
+        • Wallet rejected the connection
+      </div>
+      <div class="modal-actions">
+        <button class="secondary-btn" data-back-methods>← Try again</button>
+      </div>
+    `;
+  }
 }
 
 // ============================================================
@@ -468,28 +780,19 @@ function closeModal(id){
   const el = $(id);
   if (!el) return;
   el.classList.remove('active');
-  // Clear sensitive inputs on close
-  if (id === 'importModal'){
-    $('importInput').value = '';
-    $('importUnderstand').checked = false;
-  }
-  if (id === 'qrModal'){
-    $('qrDemoAddress').value = '';
+  if (id === 'walletConnectModal'){
+    cleanupWalletConnect();
+    $('wcPhraseInput').value = '';
+    $('wcUnderstand').checked = false;
+    $('wcPhraseStatus').innerHTML = '';
+    $('wcExtStatus').innerHTML = '';
   }
 }
-// Close button wiring
 document.addEventListener('click', (e) => {
   const closeBtn = e.target.closest('[data-close-modal]');
-  if (closeBtn){
-    closeModal(closeBtn.dataset.closeModal);
-    return;
-  }
-  // Click on overlay background closes
-  if (e.target.classList.contains('modal-overlay')){
-    closeModal(e.target.id);
-  }
+  if (closeBtn){ closeModal(closeBtn.dataset.closeModal); return; }
+  if (e.target.classList.contains('modal-overlay')){ closeModal(e.target.id); }
 });
-// ESC closes any open modal
 document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape'){
     document.querySelectorAll('.modal-overlay.active').forEach(m => closeModal(m.id));
@@ -497,148 +800,14 @@ document.addEventListener('keydown', (e) => {
 });
 
 // ============================================================
-// IMPORT MODAL
-// ============================================================
-$('openImportModal').addEventListener('click', () => {
-  if (typeof ethers === 'undefined'){
-    showToast('Import requires ethers.js — check your internet connection and refresh.', 'error', 6000);
-    return;
-  }
-  openModal('importModal');
-  setTimeout(() => $('importInput').focus(), 100);
-});
-
-$('importConfirm').addEventListener('click', async () => {
-  const input = $('importInput');
-  const understood = $('importUnderstand');
-  const raw = input.value.trim();
-
-  if (!understood.checked){
-    showToast('Please confirm you understand the testing warning.', 'error');
-    return;
-  }
-  if (!raw){
-    showToast('Enter a recovery phrase or private key.', 'error');
-    return;
-  }
-  if (typeof ethers === 'undefined'){
-    showToast('ethers.js not available.', 'error');
-    return;
-  }
-
-  try {
-    let address;
-
-    // Private key? 0x + 64 hex
-    if (/^0x[0-9a-fA-F]{64}$/.test(raw)){
-      const w = new ethers.Wallet(raw);
-      address = w.address;
-    } else {
-      // Mnemonic
-      const words = raw.split(/\s+/);
-      if (![12, 15, 18, 21, 24].includes(words.length)){
-        throw new Error('Phrase must contain 12, 15, 18, 21, or 24 words (got ' + words.length + ').');
-      }
-      const w = ethers.Wallet.fromPhrase(raw);
-      address = w.address;
-    }
-
-    // ⚠️ CRITICAL: wipe the input immediately. Do not log raw.
-    input.value = '';
-
-    showToast('Address derived. Fetching balance…', 'info', 3000);
-    const success = await addManualWallet(address, 'Imported ETH', 'ethereum', 'imported');
-
-    if (success){
-      closeModal('importModal');
-      showToast(
-        '✓ Wallet imported: ' + address.slice(0, 6) + '…' + address.slice(-4),
-        'success', 6000
-      );
-    }
-  } catch(err){
-    input.value = ''; // always clear on failure
-    showToast('Import failed: ' + (err?.message || 'Invalid input.'), 'error', 6000);
-  }
-});
-
-// ============================================================
-// QR MODAL (demo)
-// ============================================================
-function randomHex(bytes){
-  const arr = new Uint8Array(bytes);
-  crypto.getRandomValues(arr);
-  return Array.from(arr).map(b => b.toString(16).padStart(2, '0')).join('');
-}
-
-function openQrModal(){
-  openModal('qrModal');
-  const container = $('qrContainer');
-  container.innerHTML = '';
-  $('qrDemoStatus').textContent = 'Waiting for wallet to scan…';
-
-  // Build a plausible WalletConnect-style URI (demo only)
-  const uri = 'wc:demo-' + Math.random().toString(36).slice(2, 10) +
-              '@2?relay-protocol=irn&symKey=' + randomHex(32);
-
-  if (typeof QRCode !== 'undefined'){
-    try {
-      new QRCode(container, {
-        text: uri,
-        width: 200,
-        height: 200,
-        colorDark: '#090b14',
-        colorLight: '#ffffff',
-        correctLevel: QRCode.CorrectLevel.M
-      });
-    } catch(e){
-      container.innerHTML =
-        '<p style="font-size:11px;color:#666;padding:20px;text-align:center">Failed to generate QR</p>';
-    }
-  } else {
-    container.innerHTML =
-      '<p style="font-size:11px;color:#666;padding:20px;text-align:center">QR library failed to load</p>';
-  }
-}
-
-$('openQrModal').addEventListener('click', openQrModal);
-
-$('qrDemoConfirm').addEventListener('click', async () => {
-  const addrInput = $('qrDemoAddress');
-  const addr = addrInput.value.trim();
-  if (!addr){
-    showToast('Enter an address to simulate.', 'error');
-    return;
-  }
-
-  // Detect chain by format
-  let chain = null;
-  if (/^0x[0-9a-fA-F]{40}$/.test(addr)) chain = 'ethereum';
-  else if (/^[1-9A-HJ-NP-Za-km-z]{32,44}$/.test(addr)) chain = 'solana';
-  else if (/^(bc1|[13])[a-zA-HJ-NP-Z0-9]{25,62}$/.test(addr)) chain = 'bitcoin';
-
-  if (!chain){
-    showToast('Unrecognised address format.', 'error', 5000);
-    return;
-  }
-
-  $('qrDemoStatus').textContent = 'Simulating scan…';
-  const success = await addManualWallet(addr, 'QR Wallet (demo)', chain, 'qr-demo');
-
-  if (success){
-    closeModal('qrModal');
-    showToast('✓ Demo QR wallet connected.', 'success', 4000);
-  } else {
-    $('qrDemoStatus').textContent = 'Failed — see notification.';
-  }
-});
-
-// ============================================================
-// DISCONNECT
+// DISCONNECT / REFRESH
 // ============================================================
 async function disconnectWallet(address, chain){
   const idx = connectedWallets.findIndex(w =>
-    w.address.toLowerCase() === address.toLowerCase() && w.chain === chain
+    ((w.chain === 'ethereum')
+      ? w.address.toLowerCase() === address.toLowerCase()
+      : w.address === address
+    ) && w.chain === chain
   );
   if (idx === -1) return;
   const removed = connectedWallets.splice(idx, 1)[0];
@@ -649,18 +818,13 @@ async function disconnectWallet(address, chain){
   showToast(removed.provider + ' disconnected.', 'success', 3000);
 }
 
-// ============================================================
-// REFRESH
-// ============================================================
 async function refreshAllBalances(){
   if (connectedWallets.length === 0){
     showToast('No wallets to refresh.', 'info', 3500);
     return;
   }
-
   const buttons = [$('refreshDashboard'), $('refreshWallets')].filter(Boolean);
   buttons.forEach(b => b.classList.add('loading'));
-
   try {
     await fetchPrices();
     await Promise.allSettled(connectedWallets.map(async w => {
@@ -668,9 +832,7 @@ async function refreshAllBalances(){
         const bal = await fetchBalance(w.chain, w.address);
         w.balance = bal;
         w.balanceUSD = bal * (prices[w.symbol] || 0);
-      } catch(e){
-        console.warn('Refresh failed for ' + w.provider, e);
-      }
+      } catch(e){ console.warn('Refresh failed for ' + w.provider, e); }
     }));
     saveConnected();
     renderConnectedWallets();
@@ -687,34 +849,25 @@ async function refreshAllBalances(){
 function formatMoney(value, currency){
   try {
     return new Intl.NumberFormat(undefined, {
-      style: 'currency', currency,
-      maximumFractionDigits: 2
+      style: 'currency', currency, maximumFractionDigits: 2
     }).format(value);
-  } catch(e){
-    return currency + ' ' + value.toFixed(2);
-  }
+  } catch(e){ return currency + ' ' + value.toFixed(2); }
 }
-
 function shortenAddress(addr){
   if (!addr) return '';
   if (addr.length <= 16) return addr;
   return addr.slice(0, 8) + '…' + addr.slice(-6);
 }
-
 function chainLabel(chain){
   return ({ ethereum: 'ETH', solana: 'SOL', bitcoin: 'BTC', cosmos: 'ATOM' }[chain] || chain);
 }
-
 function walletIcon(providerName, chain, imported){
   if (imported && chain === 'ethereum') return 'https://cdn.simpleicons.org/ethereum';
-  if (providerName === 'QR Wallet (demo)'){
-    return 'https://cdn.simpleicons.org/walletconnect';
-  }
   return walletIconUrls[providerName] || null;
 }
 
 // ============================================================
-// PORTFOLIO TOTALS
+// PORTFOLIO DISPLAY
 // ============================================================
 function updatePortfolioDisplay(){
   const totalUSD = connectedWallets.reduce((s, w) => s + (w.balanceUSD || 0), 0);
@@ -759,7 +912,7 @@ function renderDashboard(){
     if (summaryEl){
       summaryEl.innerHTML = connectedWallets.map(w => {
         const icon = walletIcon(w.provider, w.chain, w.imported);
-        const fallback = w.chain === 'ethereum' ? 'ETH' : w.chain === 'solana' ? 'SOL' : 'BTC';
+        const fallback = w.symbol || '?';
         const logoInner = icon
           ? '<img src="' + icon + '" alt="" onerror="this.replaceWith(document.createTextNode(\'' + fallback + '\'))">'
           : fallback;
@@ -802,11 +955,13 @@ function renderDashboard(){
             <div style="display:flex;justify-content:space-between;align-items:center;gap:10px">
               <div style="display:flex;align-items:center;gap:10px">
                 <span class="chain-badge ${chain}">${chainLabel(chain)}</span>
-                <span class="asset-row-pct">${pct}%</span>
+                <span style="font-size:10px;color:var(--muted)">${pct}%</span>
               </div>
-              <span class="asset-row-value">${formatMoney(val, 'USD')}</span>
+              <span style="font-size:11px;font-weight:700">${formatMoney(val, 'USD')}</span>
             </div>
-            <div class="asset-bar"><div class="asset-bar-fill" style="width:${pct}%"></div></div>
+            <div style="width:100%;height:4px;border-radius:2px;background:var(--surface3);overflow:hidden;margin-top:6px">
+              <div style="height:100%;width:${pct}%;background:var(--purple);border-radius:2px"></div>
+            </div>
           </div>
         `;
       }).join('');
@@ -831,7 +986,7 @@ function renderConnectedWallets(){
   emptyEl.classList.add('hidden');
   listEl.innerHTML = connectedWallets.map(w => {
     const icon = walletIcon(w.provider, w.chain, w.imported);
-    const fallback = w.chain === 'ethereum' ? 'ETH' : w.chain === 'solana' ? 'SOL' : 'BTC';
+    const fallback = w.symbol || '?';
     const logoInner = icon
       ? '<img src="' + icon + '" alt="" onerror="this.replaceWith(document.createTextNode(\'' + fallback + '\'))">'
       : fallback;
@@ -957,12 +1112,10 @@ let currentFilter = 'all';
 
 function renderWalletDirectory(){
   const query = ($('walletSearch').value || '').toLowerCase();
-
   const filtered = wallets.filter(w => {
     const matchesCategory = currentFilter === 'all' || w[1] === currentFilter;
     return matchesCategory && (
-      w[0].toLowerCase().includes(query) ||
-      w[2].toLowerCase().includes(query)
+      w[0].toLowerCase().includes(query) || w[2].toLowerCase().includes(query)
     );
   });
 
@@ -975,26 +1128,22 @@ function renderWalletDirectory(){
     card.dataset.walletName = name;
     card.dataset.walletChain = chain;
 
-    if (providers[name] && providers[name].detect()){
-      card.classList.add('installed');
-    }
+    try {
+      if (providers[name] && providers[name].detect()) card.classList.add('installed');
+    } catch(_){}
 
-    if (connectedWallets.some(cw => cw.provider === name)){
+    if (connectedWallets.some(cw => cw.provider === name || cw.provider === name + ' (WC'))){
       card.classList.add('connected');
     }
 
     const logo = document.createElement('div');
     logo.className = 'wallet-logo';
-
     const iconUrl = walletIconUrls[name];
     if (iconUrl){
       const img = document.createElement('img');
       img.src = iconUrl;
       img.alt = name + ' logo';
-      img.onerror = () => {
-        img.remove();
-        logo.textContent = name.slice(0, 2).toUpperCase();
-      };
+      img.onerror = () => { img.remove(); logo.textContent = name.slice(0, 2).toUpperCase(); };
       logo.appendChild(img);
     } else {
       logo.textContent = name.slice(0, 2).toUpperCase();
@@ -1023,7 +1172,7 @@ function renderWalletDirectory(){
 grid.addEventListener('click', (e) => {
   const card = e.target.closest('.wallet-card');
   if (!card) return;
-  connectWallet(card.dataset.walletName, card.dataset.walletChain);
+  openWalletConnectModal(card.dataset.walletName, card.dataset.walletChain);
 });
 
 $('walletSearch').addEventListener('input', renderWalletDirectory);
@@ -1038,16 +1187,14 @@ document.querySelectorAll('.filter').forEach(button => {
 });
 
 // ============================================================
-// SETTINGS ACTIONS
+// SETTINGS
 // ============================================================
 $('clearAllWallets').addEventListener('click', () => {
   if (connectedWallets.length === 0){
     showToast('No connected wallets to clear.', 'info', 3000);
     return;
   }
-  if (!confirm('Remove all ' + connectedWallets.length + ' connected wallet(s) from this browser? Your funds remain safe.')){
-    return;
-  }
+  if (!confirm('Remove all ' + connectedWallets.length + ' connected wallet(s)? Your funds remain safe.')) return;
   connectedWallets = [];
   saveConnected();
   renderConnectedWallets();
@@ -1056,14 +1203,11 @@ $('clearAllWallets').addEventListener('click', () => {
   showToast('All connected wallets cleared.', 'success', 3000);
 });
 
-// ============================================================
-// REFRESH BUTTONS
-// ============================================================
 $('refreshDashboard')?.addEventListener('click', refreshAllBalances);
 $('refreshWallets')?.addEventListener('click', refreshAllBalances);
 
 // ============================================================
-// AI HELP LINE
+// AI HELP
 // ============================================================
 const aiWindow = $('aiWindow');
 const aiInput = $('aiInput');
@@ -1085,26 +1229,25 @@ function appendAIMessage(message, type){
   box.appendChild(el);
   box.scrollTop = box.scrollHeight;
 }
-
 function sendAIMessage(){
   const question = aiInput.value.trim();
   if (!question) return;
   appendAIMessage(question, 'user');
   aiInput.value = '';
   const q = question.toLowerCase();
-  let answer = 'I can help with general NEXUS VAULT guidance. Ask about wallet connections, security, portfolio tracking, or currency settings.';
+  let answer = 'I can help with NEXUS VAULT. Ask about wallet connections, security, or settings.';
   if (/seed phrase|recovery phrase|private key|security|safe/.test(q)){
-    answer = 'Never share your seed phrase, recovery phrase or private keys. The import feature in NEXUS VAULT is provided only for local testing — the phrase is used in your browser and discarded, only the address is kept.';
-  } else if (/connect|wallet|metamask|phantom|solflare|import/.test(q)){
-    answer = 'Open "Connect Wallets" from the menu. Browser providers connect directly. For testing, use "Import Phrase / Private Key" or "QR Connect (Demo)" at the top of that page.';
+    answer = 'For extension connections, never share your phrase. For phrase import, it stays in your browser — only the derived address is saved.';
+  } else if (/connect|wallet|metamask|phantom|import|qr/.test(q)){
+    answer = 'Click any wallet card on the "Connect Wallets" page. You can choose: browser extension, import phrase/key, or scan QR (needs free WalletConnect Project ID).';
   } else if (/currency|kes|dollar|usd/.test(q)){
-    answer = 'Open Settings to choose your display currency. USD remains the base currency while your local currency is used for equivalent values.';
+    answer = 'Open Settings → Local display currency. USD stays the base.';
   } else if (/portfolio|balance|asset|total/.test(q)){
-    answer = 'Your dashboard combines balances from all connected wallets. Press the ↻ refresh button to re-fetch prices and balances.';
+    answer = 'The dashboard combines balances from all connected wallets. Use ↻ to refresh prices and balances.';
   } else if (/disconnect|remove/.test(q)){
-    answer = 'Open "My Wallets" and click Disconnect on any wallet. This removes it from NEXUS VAULT only — your funds stay safe.';
+    answer = 'Open "My Wallets" and click Disconnect on any wallet.';
   } else if (/support|faq|help/.test(q)){
-    answer = 'You can visit the FAQ and Support Centre from the navigation menu or the footer.';
+    answer = 'Visit FAQ and Support Centre from the menu or footer.';
   }
   setTimeout(() => appendAIMessage(answer, 'bot'), 250);
 }
@@ -1120,6 +1263,13 @@ async function init(){
   renderWalletDirectory();
   renderConnectedWallets();
   renderDashboard();
+
+  // Sanity check: ethers loaded?
+  if (typeof window.ethers === 'undefined'){
+    setTimeout(() => {
+      showToast('⚠️ ethers.js did not load. Phrase import will not work until you refresh with working internet.', 'error', 8000);
+    }, 1000);
+  }
 }
 
 if (document.readyState === 'loading'){
