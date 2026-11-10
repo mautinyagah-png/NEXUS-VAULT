@@ -152,13 +152,13 @@
   <button class="back-btn" data-page="home">← Back to dashboard</button>
   <h1 class="page-title">Connect Your Wallets</h1>
   <p class="page-subtitle">
-    Click any wallet to choose how you want to connect: browser extension,
-    import phrase/private key, or scan a QR code with your phone.
+    Click any wallet in <strong>Connectable Now</strong> to choose your connection method.
+    Wallets in <strong>Coming Soon</strong> are recognised but not yet directly supported.
   </p>
 
   <div class="info-banner">
     <span>ℹ</span>
-    <span>Every wallet card opens a connect menu with three options. Pick the one that works for you.</span>
+    <span>Wallets with a green dot are detected in this browser. Trust Wallet, MetaMask, Coinbase, Brave, Rabby, Phantom, Solflare, Backpack and Unisat are all connectable.</span>
   </div>
 
   <input class="search-box" id="walletSearch"
@@ -173,9 +173,15 @@
     <button class="filter" data-filter="cosmos">Cosmos</button>
   </div>
 
-  <div class="wallet-grid" id="walletGrid"></div>
+  <h2 class="wallet-section-title">✓ Connectable Now</h2>
+  <p class="wallet-section-desc">These wallets support direct connection via their official browser provider or WalletConnect.</p>
+  <div class="wallet-grid" id="walletGridConnectable"></div>
 
-  <p style="font-size:10px;color:var(--muted);margin-top:20px;line-height:1.8">
+  <h2 class="wallet-section-title" style="margin-top:32px">⏳ Coming Soon</h2>
+  <p class="wallet-section-desc">These wallets are in the directory but their direct connection is not yet integrated.</p>
+  <div class="wallet-grid" id="walletGridComingSoon"></div>
+
+  <p style="font-size:10px;color:var(--muted);margin-top:24px;line-height:1.8">
     NEXUS VAULT is non-custodial. Phrase import runs entirely in your browser —
     your phrase is used to derive an address, then discarded. Only the address is saved.
   </p>
@@ -188,7 +194,7 @@
   <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:15px;flex-wrap:wrap;margin-bottom:20px">
     <div>
       <h1 class="page-title">My Wallets</h1>
-      <p class="page-subtitle" style="margin:9px 0 0">View your connected wallets and portfolio information.</p>
+      <p class="page-subtitle" style="margin:9px 0 0">View balances, transactions, and send or swap from your wallets.</p>
     </div>
     <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
       <button class="refresh-btn" id="refreshWallets" title="Refresh balances">↻ Refresh</button>
@@ -340,20 +346,24 @@
       <p>For browser extension connections, no. The import feature is provided for local testing only — the phrase is used in your browser to derive an address and then discarded. Only the address is saved.</p>
     </details>
     <details class="faq-item">
+      <summary>Why is Trust Wallet in Connectable Now?</summary>
+      <p>Trust Wallet injects its own provider into the browser (either via EIP-6963 or window.trustwallet). NEXUS VAULT detects it directly — no WalletConnect needed on desktop.</p>
+    </details>
+    <details class="faq-item">
       <summary>How do I connect using QR code?</summary>
-      <p>Click any wallet, choose "Scan QR Code", and get a free WalletConnect Project ID from cloud.walletconnect.com. Enter it once (Settings keeps it saved), and the QR code will connect to any WalletConnect-compatible mobile wallet.</p>
+      <p>Click any EVM wallet in Connectable Now, choose "Scan QR Code", and get a free WalletConnect Project ID from cloud.walletconnect.com. Enter it once (Settings keeps it saved), and the QR code will connect to any WalletConnect-compatible mobile wallet.</p>
     </details>
     <details class="faq-item">
       <summary>Can I connect multiple wallets?</summary>
-      <p>Yes. You can connect MetaMask, Phantom, Unisat and other supported wallets at the same time. Each wallet is displayed separately alongside the combined portfolio total.</p>
+      <p>Yes. You can connect MetaMask, Trust Wallet, Phantom, Unisat and other supported wallets at the same time. Each wallet is displayed separately alongside the combined portfolio total.</p>
     </details>
     <details class="faq-item">
       <summary>Does NEXUS VAULT hold my cryptocurrency?</summary>
       <p>No. NEXUS VAULT is non-custodial. It only reads public addresses and balances. Your wallet remains in your full control at all times.</p>
     </details>
     <details class="faq-item">
-      <summary>Why can I choose a display currency?</summary>
-      <p>USD is the base currency. You can choose a local display currency to see equivalent portfolio values.</p>
+      <summary>Can I swap tokens here?</summary>
+      <p>Yes. For EVM wallets, NEXUS VAULT uses the 1inch aggregator API (requires a free API key from portal.1inch.dev). For simple sends (deposit/withdraw), every wallet can send native coin to any address.</p>
     </details>
     <details class="faq-item">
       <summary>How do I disconnect a wallet?</summary>
@@ -426,7 +436,7 @@
   <div class="ai-note">Preview assistant — not connected to a live AI service yet.</div>
 </div>
 
-<!-- ============ WALLET CONNECT MODAL (per wallet) ============ -->
+<!-- ============ WALLET CONNECT MODAL ============ -->
 <div class="modal-overlay" id="walletConnectModal">
   <div class="modal">
     <div class="modal-head">
@@ -507,6 +517,86 @@
         <div id="wcQrContent"></div>
       </div>
 
+    </div>
+  </div>
+</div>
+
+<!-- ============ TRANSACTION MODAL ============ -->
+<div class="modal-overlay" id="txModal">
+  <div class="modal" style="max-width:560px">
+    <div class="modal-head">
+      <h3 id="txModalTitle">Transactions</h3>
+      <button class="modal-close" data-close-modal="txModal" aria-label="Close">×</button>
+    </div>
+    <div class="modal-body" id="txModalBody">
+      <p style="text-align:center;font-size:11px;color:var(--muted);padding:30px 0">Loading transactions…</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============ SEND MODAL (Deposit / Withdraw) ============ -->
+<div class="modal-overlay" id="sendModal">
+  <div class="modal">
+    <div class="modal-head">
+      <h3 id="sendModalTitle">Send</h3>
+      <button class="modal-close" data-close-modal="sendModal" aria-label="Close">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-warning" style="margin:0 0 14px;background:rgba(84,134,255,.1);border-left-color:var(--blue)">
+        <strong>Double-check the recipient.</strong> Blockchain transactions cannot be reversed.
+      </div>
+
+      <label for="sendTo">Recipient address</label>
+      <input type="text" id="sendTo" placeholder="0x… / base58 / bc1…" autocomplete="off" spellcheck="false">
+
+      <label for="sendAmount">Amount</label>
+      <input type="text" id="sendAmount" placeholder="0.01" autocomplete="off" spellcheck="false">
+
+      <div id="sendStatus"></div>
+
+      <div class="modal-actions">
+        <button class="secondary-btn" data-close-modal="sendModal">Cancel</button>
+        <button class="primary-btn" id="sendConfirm">Send transaction</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ SWAP MODAL ============ -->
+<div class="modal-overlay" id="swapModal">
+  <div class="modal">
+    <div class="modal-head">
+      <h3>Swap Tokens</h3>
+      <button class="modal-close" data-close-modal="swapModal" aria-label="Close">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-warning" style="margin:0 0 14px;background:rgba(146,117,255,.1);border-left-color:var(--purple)">
+        <strong>Powered by 1inch.</strong> Requires a free API key from <a href="https://portal.1inch.dev" target="_blank" rel="noopener" style="color:var(--purple)">portal.1inch.dev</a>. Without one, swap quotes will not load.
+      </div>
+
+      <label for="swapFromToken">From token</label>
+      <select id="swapFromToken" class="swap-select">
+        <option value="ETH">ETH</option>
+        <option value="USDC">USDC</option>
+        <option value="USDT">USDT</option>
+      </select>
+
+      <label for="swapFromAmount">Amount</label>
+      <input type="text" id="swapFromAmount" placeholder="0.1" autocomplete="off" spellcheck="false">
+
+      <label for="swapToToken">To token</label>
+      <select id="swapToToken" class="swap-select">
+        <option value="USDC">USDC</option>
+        <option value="ETH">ETH</option>
+        <option value="USDT">USDT</option>
+      </select>
+
+      <div id="swapStatus"></div>
+
+      <div class="modal-actions">
+        <button class="secondary-btn" data-close-modal="swapModal">Cancel</button>
+        <button class="primary-btn" id="swapConfirm">Get quote &amp; swap</button>
+      </div>
     </div>
   </div>
 </div>
