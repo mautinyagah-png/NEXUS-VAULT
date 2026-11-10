@@ -1,7 +1,7 @@
 /* ============================================================
-   NEXUS VAULT — v2.1
-   Blockscout transactions · live prices · animated chains ·
-   receive QR · send · swap · trust features
+   NEXUS VAULT — v2.2
+   Wallet install links · support email · blockscout tx ·
+   animated chains · live prices · receive QR · send · swap
    ============================================================ */
 
 (function () {
@@ -12,6 +12,7 @@
   });
 
   const $ = (id) => document.getElementById(id);
+  const SUPPORT_EMAIL = 'nexusvault@gmail.com';
 
   // ============================================================
   // TOASTS
@@ -181,7 +182,6 @@
       currencySetting.appendChild(opt);
     }
     currencySetting.value = localCurrency;
-
     const descEl = $('currencyDescription');
     if (descEl) descEl.textContent = 'Detected: ' + detectedCurrency + '. Current display currency: ' + localCurrency + '.';
 
@@ -242,7 +242,6 @@
   let wcProjectId = '';
   let etherscanApiKey = '';
   let oneInchApiKey = '';
-
   try { wcProjectId = localStorage.getItem('nexus-wc-project-id') || ''; } catch (e) {}
   try { etherscanApiKey = localStorage.getItem('nexus-etherscan-key') || ''; } catch (e) {}
   try { oneInchApiKey = localStorage.getItem('nexus-1inch-key') || ''; } catch (e) {}
@@ -264,7 +263,7 @@
   if (esKeySave) esKeySave.addEventListener('click', () => {
     etherscanApiKey = (esKeyInput && esKeyInput.value.trim()) || '';
     try { localStorage.setItem('nexus-etherscan-key', etherscanApiKey); } catch (e) {}
-    showToast(etherscanApiKey ? '✓ Etherscan key saved (optional fallback).' : 'Etherscan key cleared.', 'success', 3000);
+    showToast(etherscanApiKey ? '✓ Etherscan key saved.' : 'Etherscan key cleared.', 'success', 3000);
   });
 
   const inchKeyInput = $('oneInchKeyInput');
@@ -277,7 +276,7 @@
   });
 
   // ============================================================
-  // PROVIDERS (incl. Trust Wallet via EIP-6963)
+  // PROVIDERS
   // ============================================================
   const eip6963Providers = new Map();
   function initEIP6963() {
@@ -362,7 +361,7 @@
   }
 
   // ============================================================
-  // PRICES (with 24h change)
+  // PRICES
   // ============================================================
   async function fetchPrices() {
     try {
@@ -402,6 +401,45 @@
   }
 
   // ============================================================
+  // WALLET INSTALL LINKS (official sites)
+  // ============================================================
+  const walletInstallUrls = {
+    'MetaMask': 'https://metamask.io/download/',
+    'Trust Wallet': 'https://trustwallet.com/download',
+    'Coinbase Wallet': 'https://www.coinbase.com/wallet/downloads',
+    'Phantom': 'https://phantom.app/download',
+    'Binance Web3': 'https://www.binance.com/en/web3wallet',
+    'OKX Wallet': 'https://www.okx.com/web3',
+    'Exodus': 'https://www.exodus.com/download/',
+    'Rabby Wallet': 'https://rabby.io/',
+    'Rainbow': 'https://rainbow.me/',
+    'Ledger': 'https://www.ledger.com/',
+    'Trezor': 'https://trezor.io/',
+    'Brave Wallet': 'https://brave.com/wallet/',
+    'Zerion': 'https://zerion.io/',
+    'Argent': 'https://www.argent.xyz/',
+    'Safe': 'https://safe.global/',
+    'Solflare': 'https://solflare.com/',
+    'Backpack': 'https://backpack.app/',
+    'Glow': 'https://glow.app/',
+    'Keplr': 'https://www.keplr.app/',
+    'Leap Wallet': 'https://www.leapwallet.io/',
+    'Leather': 'https://leather.io/',
+    'Unisat': 'https://unisat.io/',
+    'Xverse': 'https://www.xverse.app/',
+    'Electrum': 'https://electrum.org/',
+    'imToken': 'https://token.im/',
+    'TokenPocket': 'https://www.tokenpocket.pro/',
+    'Bitget Wallet': 'https://web3.bitget.com/',
+    'Crypto.com Wallet': 'https://crypto.com/defi-wallet',
+    'MathWallet': 'https://mathwallet.org/',
+    'Coin98': 'https://coin98.com/',
+    'Talisman': 'https://talisman.xyz/',
+    'Enkrypt': 'https://www.enkrypt.com/',
+    'WalletConnect': 'https://walletconnect.com/'
+  };
+
+  // ============================================================
   // ADD WALLET
   // ============================================================
   async function addWalletToPortfolio(address, providerName, chain, opts) {
@@ -439,7 +477,6 @@
       renderConnectedWallets();
       renderDashboard();
     } catch (e) { console.warn('Balance fetch failed:', providerName, e); }
-
     return true;
   }
 
@@ -635,7 +672,7 @@
           </div>
           <div class="wallet-action-row">
             <button class="wallet-action-btn" data-tx-address="${w.address}" data-tx-chain="${w.chain}">📜 Tx history</button>
-            <button class="wallet-action-btn" data-receive-address="${w.address}" data-receive-chain="${w.chain}" data-receive-provider="${w.provider}">⬇ Deposit</button>
+            <button class="wallet-action-btn" data-receive-address="${w.address}" data-receive-chain="${w.chain}">⬇ Deposit</button>
             <button class="wallet-action-btn" data-send-address="${w.address}" data-send-chain="${w.chain}" data-send-provider="${w.provider}">⬆ Withdraw</button>
             ${canSwap ? `<button class="wallet-action-btn" data-swap-address="${w.address}">⇄ Swap</button>` : ''}
           </div>
@@ -648,9 +685,7 @@
     }).join('');
   }
 
-  // ============================================================
-  // WALLET ACTIONS (delegated)
-  // ============================================================
+  // Delegated wallet actions
   document.addEventListener('click', (e) => {
     const d = e.target.closest('[data-disconnect-address]');
     if (d) { disconnectWallet(d.dataset.disconnectAddress, d.dataset.disconnectChain); return; }
@@ -824,10 +859,12 @@
 
     const provider = providers[name];
     if (!provider || !provider.detect()) {
+      const installUrl = walletInstallUrls[name];
       statusEl.innerHTML = `
         <div class="modal-warning" style="margin:0">
           <strong>${name} not detected.</strong><br>
           Install the official ${name} browser extension or app, unlock it, then refresh this page.
+          ${installUrl ? `<br><br><a href="${installUrl}" target="_blank" rel="noopener" style="color:var(--purple);font-weight:600">Open official ${name} download page ↗</a>` : ''}
         </div>
         <div class="modal-actions" style="margin-top:14px">
           <button class="secondary-btn" data-back-methods>← Back</button>
@@ -1083,8 +1120,11 @@
     card.className = 'wallet-card';
     card.dataset.walletName = name;
     card.dataset.walletChain = chain;
+    card.dataset.walletUrl = walletInstallUrls[name] || '';
+
+    let isDetected = false;
     if (isConnectable) {
-      try { if (providers[name] && providers[name].detect()) card.classList.add('installed'); } catch (_) {}
+      try { isDetected = !!(providers[name] && providers[name].detect()); } catch (_) {}
       if (connectedWallets.some(cw => cw.provider === name || cw.provider === name + ' (WC)')) card.classList.add('connected');
     } else card.classList.add('coming-soon');
 
@@ -1107,7 +1147,29 @@
     const typeEl = document.createElement('div');
     typeEl.className = 'wallet-type';
     typeEl.textContent = type;
+    if (isDetected) {
+      const dot = document.createElement('span');
+      dot.className = 'wallet-dot';
+      dot.title = 'Detected in this browser';
+      typeEl.appendChild(dot);
+    }
     info.append(nameEl, typeEl);
+
+    // Install button (opens official site)
+    const installUrl = walletInstallUrls[name];
+    if (installUrl) {
+      const installBtn = document.createElement('a');
+      installBtn.className = 'wallet-install-btn';
+      installBtn.href = installUrl;
+      installBtn.target = '_blank';
+      installBtn.rel = 'noopener noreferrer';
+      installBtn.title = 'Open ' + name + ' official site';
+      installBtn.setAttribute('aria-label', 'Install ' + name);
+      installBtn.innerHTML = '<svg viewBox="0 0 24 24"><path d="M7 17L17 7M17 7H8M17 7V16"/></svg>';
+      installBtn.addEventListener('click', (e) => e.stopPropagation());
+      card.appendChild(installBtn);
+    }
+
     card.append(logo, info);
     return card;
   }
@@ -1126,15 +1188,23 @@
     if (!fs.length) gridS.innerHTML = '<p style="font-size:11px;color:var(--muted);grid-column:1/-1;padding:10px 0">No coming-soon wallets match.</p>';
   }
 
+  // Card click
   document.addEventListener('click', (e) => {
     const card = e.target.closest('.wallet-card');
     if (!card) return;
+    if (e.target.closest('.wallet-install-btn')) return; // install button handles itself
     if (card.classList.contains('coming-soon')) {
-      showToast(card.dataset.walletName + ' is coming soon — not yet connectable.', 'info', 3500);
+      const url = card.dataset.walletUrl;
+      showToast(
+        card.dataset.walletName + ' is not yet directly connectable. Click ↗ on its card to install it, then refresh NEXUS VAULT and it will appear in Connectable Now.',
+        'info', 5500
+      );
+      if (url) { /* Optional: could open URL — left as toast for now */ }
       return;
     }
     openWalletConnectModal(card.dataset.walletName, card.dataset.walletChain);
   });
+
   $('walletSearch') && $('walletSearch').addEventListener('input', renderWalletDirectory);
   document.querySelectorAll('.filter').forEach(button => {
     button.addEventListener('click', () => {
@@ -1149,7 +1219,6 @@
   // TRANSACTIONS (Blockscout primary, Etherscan fallback)
   // ============================================================
   async function fetchEthTransactions(address) {
-    // Primary: Blockscout (free, no key)
     try {
       const res = await fetch('https://eth.blockscout.com/api/v2/addresses/' + encodeURIComponent(address) + '/transactions');
       if (res.ok) {
@@ -1167,7 +1236,6 @@
       }
     } catch (e) { console.warn('Blockscout failed:', e); }
 
-    // Fallback: Etherscan (needs key)
     if (etherscanApiKey) {
       try {
         const url = 'https://api.etherscan.io/api?module=account&action=txlist&address=' +
@@ -1176,20 +1244,14 @@
         const data = await res.json();
         if (data.status === '1' && Array.isArray(data.result)) {
           return data.result.map(tx => ({
-            hash: tx.hash,
-            from: tx.from,
-            to: tx.to,
+            hash: tx.hash, from: tx.from, to: tx.to,
             valueEth: parseInt(tx.value, 10) / 1e18,
             timestamp: parseInt(tx.timeStamp, 10),
             status: tx.txreceipt_status
           }));
         }
-        if (data.message && data.message.toLowerCase().includes('rate limit')) {
-          throw new Error('Etherscan is rate-limited. Wait a minute or use Blockscout only.');
-        }
       } catch (e) { console.warn('Etherscan failed:', e); }
     }
-
     throw new Error('Could not fetch transactions. Blockscout may be temporarily down — try again in a moment.');
   }
 
@@ -1235,13 +1297,8 @@
         }).join('');
       } else if (chain === 'solana') {
         const res = await fetch('https://api.mainnet-beta.solana.com', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            jsonrpc: '2.0', id: 1,
-            method: 'getSignaturesForAddress',
-            params: [address, { limit: 25 }]
-          })
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'getSignaturesForAddress', params: [address, { limit: 25 }] })
         });
         const data = await res.json();
         if (data.error) throw new Error(data.error.message);
@@ -1291,7 +1348,7 @@
   }
 
   // ============================================================
-  // RECEIVE MODAL (Deposit / QR)
+  // RECEIVE MODAL
   // ============================================================
   async function openReceiveModal(address, chain) {
     openModal('receiveModal');
@@ -1319,7 +1376,6 @@
       qrEl.innerHTML = '<p style="color:#666;font-size:11px">QR failed.</p>';
     }
 
-    // Wire copy button (once)
     const copyBtn = $('receiveCopy');
     if (copyBtn && !copyBtn.dataset.wired) {
       copyBtn.dataset.wired = '1';
@@ -1353,7 +1409,7 @@
   }
 
   // ============================================================
-  // SEND MODAL (Withdraw)
+  // SEND MODAL
   // ============================================================
   let sendContext = { from: '', chain: '', provider: '' };
 
@@ -1514,6 +1570,7 @@
     const q = question.toLowerCase();
     let answer = 'I can help with NEXUS VAULT. Ask about wallet connections, transactions, swaps, or settings.';
     if (/seed phrase|recovery phrase|private key|security|safe/.test(q)) answer = 'For extension connections, never share your phrase. For phrase import, it stays in your browser — only the derived address is saved.';
+    else if (/install|download|get.*wallet/.test(q)) answer = 'Every wallet card has a ↗ button in the top-right corner that opens the wallet\'s official download page. Install it, refresh NEXUS VAULT, then the wallet appears with a green dot and becomes connectable.';
     else if (/connect|wallet|metamask|trust|phantom|import|qr/.test(q)) answer = 'Click any wallet in "Connectable Now". Trust Wallet, MetaMask, Coinbase, Brave, Rabby, Phantom, Solflare, Backpack and Unisat are supported.';
     else if (/transaction|history|tx/.test(q)) answer = 'Click "Tx history" on any connected wallet. Uses Blockscout (free). Add an Etherscan key in Settings as a fallback.';
     else if (/receive|deposit/.test(q)) answer = 'Click "Deposit" to get a QR code and copyable address. Send funds from any wallet.';
@@ -1521,14 +1578,14 @@
     else if (/swap/.test(q)) answer = 'Click "Swap" on a connected Ethereum wallet. Requires a free 1inch key from portal.1inch.dev.';
     else if (/currency|kes|dollar|usd/.test(q)) answer = 'Open Settings → Local display currency. USD stays the base.';
     else if (/disconnect|remove/.test(q)) answer = 'Open "My Wallets" and click Disconnect on any wallet.';
-    else if (/support|faq|help/.test(q)) answer = 'Visit FAQ and Support Centre from the menu or footer.';
+    else if (/support|contact|email|help/.test(q)) answer = 'Email us at ' + SUPPORT_EMAIL + '. We typically respond within 24 hours.';
     setTimeout(() => appendAIMessage(answer, 'bot'), 250);
   }
   $('aiSend') && $('aiSend').addEventListener('click', sendAIMessage);
   aiInput && aiInput.addEventListener('keydown', e => { if (e.key === 'Enter') sendAIMessage(); });
 
   // ============================================================
-  // WALLET EVENT LISTENERS (account/chain change)
+  // WALLET EVENT LISTENERS
   // ============================================================
   function attachWalletListeners() {
     if (window.ethereum && window.ethereum.on) {
