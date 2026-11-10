@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#090b14">
+<meta name="description" content="NEXUS VAULT — Your entire crypto world. One powerful view. Non-custodial multi-wallet portfolio, transactions, and swaps.">
 <title>NEXUS VAULT — Your Crypto, Unified</title>
 
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cg fill='none' stroke='%23a58aff' stroke-width='2' opacity='.48'%3E%3Cpath d='M8 18L27 31L13 66L36 84M27 31L70 12L89 35L76 69L93 84M70 12L62 48L76 69'/%3E%3C/g%3E%3Cg fill='%23a58aff' opacity='.7'%3E%3Ccircle cx='8' cy='18' r='4'/%3E%3Ccircle cx='27' cy='31' r='4'/%3E%3Ccircle cx='13' cy='66' r='3'/%3E%3Ccircle cx='36' cy='84' r='3'/%3E%3Ccircle cx='70' cy='12' r='4'/%3E%3Ccircle cx='89' cy='35' r='3'/%3E%3Ccircle cx='76' cy='69' r='4'/%3E%3Ccircle cx='93' cy='84' r='3'/%3E%3C/g%3E%3Ctext x='50' y='70' font-family='Arial' font-size='64' font-weight='bold' text-anchor='middle' fill='white'%3EN%3C/text%3E%3C/svg%3E">
@@ -53,9 +54,8 @@
   </div>
 
   <div class="drawer-bottom">
-    NEXUS VAULT<br>
-    Your crypto. One unified workspace.<br>
-    Version 2.0
+    NEXUS VAULT · v2.1<br>
+    Your crypto. One unified workspace.
   </div>
 </aside>
 
@@ -79,7 +79,78 @@
         <button class="secondary-btn" data-page="connected">Explore My Portfolio →</button>
       </div>
     </div>
-    <div class="hero-art"><div class="hero-symbol">N</div></div>
+
+    <!-- Animated hero chains matching the logo -->
+    <div class="hero-art" aria-hidden="true">
+      <div class="hero-art-glow"></div>
+      <svg class="hero-chains" viewBox="0 0 300 300">
+        <g class="chain-ring chain-ring-1">
+          <circle cx="150" cy="22" r="2.6" fill="currentColor"/>
+          <circle cx="278" cy="150" r="2.6" fill="currentColor"/>
+          <circle cx="150" cy="278" r="2.6" fill="currentColor"/>
+          <circle cx="22" cy="150" r="2.6" fill="currentColor"/>
+          <line x1="150" y1="22" x2="278" y2="150" stroke="currentColor" stroke-width="0.4" opacity="0.3"/>
+          <line x1="278" y1="150" x2="150" y2="278" stroke="currentColor" stroke-width="0.4" opacity="0.3"/>
+          <line x1="150" y1="278" x2="22" y2="150" stroke="currentColor" stroke-width="0.4" opacity="0.3"/>
+          <line x1="22" y1="150" x2="150" y2="22" stroke="currentColor" stroke-width="0.4" opacity="0.3"/>
+        </g>
+        <g class="chain-ring chain-ring-2">
+          <circle cx="240" cy="60" r="2" fill="currentColor"/>
+          <circle cx="240" cy="240" r="2" fill="currentColor"/>
+          <circle cx="60" cy="240" r="2" fill="currentColor"/>
+          <circle cx="60" cy="60" r="2" fill="currentColor"/>
+          <line x1="240" y1="60" x2="240" y2="240" stroke="currentColor" stroke-width="0.3" opacity="0.25"/>
+          <line x1="240" y1="240" x2="60" y2="240" stroke="currentColor" stroke-width="0.3" opacity="0.25"/>
+          <line x1="60" y1="240" x2="60" y2="60" stroke="currentColor" stroke-width="0.3" opacity="0.25"/>
+          <line x1="60" y1="60" x2="240" y2="60" stroke="currentColor" stroke-width="0.3" opacity="0.25"/>
+        </g>
+        <g class="chain-ring chain-ring-3">
+          <circle cx="150" cy="55" r="1.8" fill="currentColor"/>
+          <circle cx="232" cy="117" r="1.8" fill="currentColor"/>
+          <circle cx="232" cy="183" r="1.8" fill="currentColor"/>
+          <circle cx="150" cy="245" r="1.8" fill="currentColor"/>
+          <circle cx="68" cy="183" r="1.8" fill="currentColor"/>
+          <circle cx="68" cy="117" r="1.8" fill="currentColor"/>
+        </g>
+      </svg>
+      <div class="hero-symbol">N</div>
+    </div>
+  </div>
+
+  <!-- Trust bar -->
+  <div class="trust-bar">
+    <div class="trust-item"><span class="trust-icon">🔒</span> Non-custodial</div>
+    <div class="trust-item"><span class="trust-icon">✓</span> No seed phrases required</div>
+    <div class="trust-item"><span class="trust-icon">🌐</span> Open standards</div>
+    <div class="trust-item"><span class="trust-icon">⚡</span> Live blockchain data</div>
+  </div>
+
+  <!-- Live price strip -->
+  <div class="price-strip" id="priceStrip">
+    <div class="price-item" data-coin="ETH">
+      <div class="price-icon-coin">Ξ</div>
+      <div class="price-info">
+        <div class="price-name">ETH</div>
+        <div class="price-value" data-price="ETH">$—</div>
+      </div>
+      <div class="price-change" data-change="ETH">—</div>
+    </div>
+    <div class="price-item" data-coin="BTC">
+      <div class="price-icon-coin">₿</div>
+      <div class="price-info">
+        <div class="price-name">BTC</div>
+        <div class="price-value" data-price="BTC">$—</div>
+      </div>
+      <div class="price-change" data-change="BTC">—</div>
+    </div>
+    <div class="price-item" data-coin="SOL">
+      <div class="price-icon-coin">◎</div>
+      <div class="price-info">
+        <div class="price-name">SOL</div>
+        <div class="price-value" data-price="SOL">$—</div>
+      </div>
+      <div class="price-change" data-change="SOL">—</div>
+    </div>
   </div>
 
   <div class="section">
@@ -282,11 +353,33 @@
     <div class="setting">
       <div>
         <h4>WalletConnect Project ID</h4>
-        <p>Required for the QR code option. Get a free one at cloud.walletconnect.com (takes ~1 minute).</p>
+        <p>Required for the QR code option. Free at cloud.walletconnect.com.</p>
       </div>
       <div style="display:flex;gap:8px;align-items:center">
-        <input type="text" id="wcProjectIdInput" class="settings-input" placeholder="Enter Project ID" autocomplete="off" spellcheck="false">
+        <input type="text" id="wcProjectIdInput" class="settings-input" placeholder="Project ID" autocomplete="off" spellcheck="false">
         <button class="secondary-btn" id="wcProjectIdSave" style="padding:9px 14px;font-size:11px">Save</button>
+      </div>
+    </div>
+
+    <div class="setting">
+      <div>
+        <h4>Etherscan API key <span style="font-weight:400;color:var(--muted)">(optional)</span></h4>
+        <p>Transactions use Blockscout by default (no key). Add an Etherscan key as a fallback if Blockscout is slow.</p>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <input type="text" id="etherscanKeyInput" class="settings-input" placeholder="Optional key" autocomplete="off" spellcheck="false">
+        <button class="secondary-btn" id="etherscanKeySave" style="padding:9px 14px;font-size:11px">Save</button>
+      </div>
+    </div>
+
+    <div class="setting">
+      <div>
+        <h4>1inch API key <span style="font-weight:400;color:var(--muted)">(for swaps)</span></h4>
+        <p>Free at portal.1inch.dev. Required to use the Swap feature.</p>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <input type="text" id="oneInchKeyInput" class="settings-input" placeholder="1inch key" autocomplete="off" spellcheck="false">
+        <button class="secondary-btn" id="oneInchKeySave" style="padding:9px 14px;font-size:11px">Save</button>
       </div>
     </div>
 
@@ -346,24 +439,28 @@
       <p>For browser extension connections, no. The import feature is provided for local testing only — the phrase is used in your browser to derive an address and then discarded. Only the address is saved.</p>
     </details>
     <details class="faq-item">
-      <summary>Why is Trust Wallet in Connectable Now?</summary>
+      <summary>Why is Trust Wallet connectable?</summary>
       <p>Trust Wallet injects its own provider into the browser (either via EIP-6963 or window.trustwallet). NEXUS VAULT detects it directly — no WalletConnect needed on desktop.</p>
     </details>
     <details class="faq-item">
       <summary>How do I connect using QR code?</summary>
-      <p>Click any EVM wallet in Connectable Now, choose "Scan QR Code", and get a free WalletConnect Project ID from cloud.walletconnect.com. Enter it once (Settings keeps it saved), and the QR code will connect to any WalletConnect-compatible mobile wallet.</p>
+      <p>Click any EVM wallet in Connectable Now, choose "Scan QR Code", and get a free WalletConnect Project ID from cloud.walletconnect.com. Enter it once and the QR code will connect to any WalletConnect-compatible mobile wallet.</p>
     </details>
     <details class="faq-item">
       <summary>Can I connect multiple wallets?</summary>
-      <p>Yes. You can connect MetaMask, Trust Wallet, Phantom, Unisat and other supported wallets at the same time. Each wallet is displayed separately alongside the combined portfolio total.</p>
+      <p>Yes. You can connect MetaMask, Trust Wallet, Phantom, Unisat and other supported wallets at the same time.</p>
     </details>
     <details class="faq-item">
       <summary>Does NEXUS VAULT hold my cryptocurrency?</summary>
       <p>No. NEXUS VAULT is non-custodial. It only reads public addresses and balances. Your wallet remains in your full control at all times.</p>
     </details>
     <details class="faq-item">
+      <summary>Why did transactions fail to load?</summary>
+      <p>Transactions use Blockscout (free, no key required). If Blockscout is rate-limited, add an optional Etherscan API key in Settings for a fallback.</p>
+    </details>
+    <details class="faq-item">
       <summary>Can I swap tokens here?</summary>
-      <p>Yes. For EVM wallets, NEXUS VAULT uses the 1inch aggregator API (requires a free API key from portal.1inch.dev). For simple sends (deposit/withdraw), every wallet can send native coin to any address.</p>
+      <p>Yes. For EVM wallets, NEXUS VAULT uses the 1inch aggregator API (requires a free API key from portal.1inch.dev).</p>
     </details>
     <details class="faq-item">
       <summary>How do I disconnect a wallet?</summary>
@@ -410,12 +507,23 @@
 
 <footer>
   <div class="container footer-inner">
-    <span>© 2026 NEXUS VAULT</span>
-    <span style="display:flex;gap:16px;flex-wrap:wrap">
-      <a href="#" data-page="faq" style="color:inherit;text-decoration:none">FAQ</a>
-      <a href="#" data-page="support" style="color:inherit;text-decoration:none">Support</a>
-      <span>Your crypto. One unified view.</span>
-    </span>
+    <div style="display:flex;flex-direction:column;gap:6px">
+      <span>© 2026 NEXUS VAULT · v2.1</span>
+      <span style="display:flex;align-items:center;gap:6px;font-size:9px">
+        <span class="status-dot"></span> All systems operational
+      </span>
+    </div>
+    <div class="footer-links">
+      <a href="#" data-page="faq">FAQ</a>
+      <a href="#" data-page="support">Support</a>
+      <a href="#" data-page="about">About</a>
+      <a href="#" onclick="return false" title="Terms page coming soon">Terms</a>
+      <a href="#" onclick="return false" title="Privacy page coming soon">Privacy</a>
+    </div>
+    <div class="footer-powered">
+      Powered by
+      <span>WalletConnect</span> · <span>1inch</span> · <span>CoinGecko</span> · <span>Blockscout</span>
+    </div>
   </div>
 </footer>
 
@@ -502,7 +610,7 @@
           <span>I understand this is for local testing.</span>
         </label>
 
-        <p class="modal-hint">Derivation path: <code>m/44'/60'/0'/0/0</code> (standard Ethereum BIP44).</p>
+        <p class="modal-hint">Derivation path: <code>m/44'/60'/0'/0/0</code></p>
 
         <div id="wcPhraseStatus"></div>
 
@@ -523,22 +631,54 @@
 
 <!-- ============ TRANSACTION MODAL ============ -->
 <div class="modal-overlay" id="txModal">
-  <div class="modal" style="max-width:560px">
+  <div class="modal" style="max-width:600px">
     <div class="modal-head">
       <h3 id="txModalTitle">Transactions</h3>
       <button class="modal-close" data-close-modal="txModal" aria-label="Close">×</button>
     </div>
     <div class="modal-body" id="txModalBody">
-      <p style="text-align:center;font-size:11px;color:var(--muted);padding:30px 0">Loading transactions…</p>
+      <div class="skeleton-list">
+        <div class="skeleton-row"></div>
+        <div class="skeleton-row"></div>
+        <div class="skeleton-row"></div>
+      </div>
     </div>
   </div>
 </div>
 
-<!-- ============ SEND MODAL (Deposit / Withdraw) ============ -->
+<!-- ============ RECEIVE MODAL (Deposit) ============ -->
+<div class="modal-overlay" id="receiveModal">
+  <div class="modal" style="max-width:520px">
+    <div class="modal-head">
+      <h3>Deposit · Receive</h3>
+      <button class="modal-close" data-close-modal="receiveModal" aria-label="Close">×</button>
+    </div>
+    <div class="modal-body">
+      <p style="font-size:11px;color:var(--muted);margin-bottom:14px;line-height:1.7">
+        Send any supported asset to this address. Only send assets on the <strong id="receiveChainName" style="color:var(--text)">Ethereum</strong> network.
+      </p>
+
+      <div class="receive-qr-wrap">
+        <div class="receive-qr" id="receiveQr"></div>
+      </div>
+
+      <div class="receive-address-box">
+        <code id="receiveAddress"></code>
+        <button class="copy-btn" id="receiveCopy" title="Copy address">
+          <span>Copy</span>
+        </button>
+      </div>
+
+      <p class="receive-warning">⚠ Sending assets from a different network will result in permanent loss.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============ SEND MODAL (Withdraw) ============ -->
 <div class="modal-overlay" id="sendModal">
   <div class="modal">
     <div class="modal-head">
-      <h3 id="sendModalTitle">Send</h3>
+      <h3 id="sendModalTitle">Withdraw</h3>
       <button class="modal-close" data-close-modal="sendModal" aria-label="Close">×</button>
     </div>
     <div class="modal-body">
@@ -571,7 +711,7 @@
     </div>
     <div class="modal-body">
       <div class="modal-warning" style="margin:0 0 14px;background:rgba(146,117,255,.1);border-left-color:var(--purple)">
-        <strong>Powered by 1inch.</strong> Requires a free API key from <a href="https://portal.1inch.dev" target="_blank" rel="noopener" style="color:var(--purple)">portal.1inch.dev</a>. Without one, swap quotes will not load.
+        <strong>Powered by 1inch.</strong> Requires a free API key from <a href="https://portal.1inch.dev" target="_blank" rel="noopener" style="color:var(--purple)">portal.1inch.dev</a>.
       </div>
 
       <label for="swapFromToken">From token</label>
