@@ -1,9 +1,9 @@
 /* ============================================================
    NEXUS VAULT — Application Logic
    Real wallet connection + live balance tracking
+   + Phrase import (local testing) + QR demo
    ============================================================ */
 
-// ---------- DOM helpers ----------
 const $ = id => document.getElementById(id);
 
 // ============================================================
@@ -38,7 +38,6 @@ function showPage(page){
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-// Delegate all [data-page] clicks
 document.addEventListener('click', (e) => {
   const btn = e.target.closest('[data-page]');
   if (!btn) return;
@@ -61,11 +60,10 @@ function applyTheme(theme){
   try { localStorage.setItem('nexus-theme', theme); } catch(e){}
 }
 applyTheme(localStorage.getItem('nexus-theme') || 'dark');
-
 themeSetting.addEventListener('change', e => applyTheme(e.target.value));
 
 // ============================================================
-// CURRENCY & REGIONAL DETECTION
+// CURRENCY
 // ============================================================
 const regionCurrencies = {
   KE:'KES',UG:'UGX',TZ:'TZS',NG:'NGN',GH:'GHS',ZA:'ZAR',
@@ -115,7 +113,7 @@ currencySetting.addEventListener('change', () => {
 $('currencyLabel').textContent = localCurrency + ' · LOCAL DISPLAY';
 
 // ============================================================
-// EXCHANGE RATES (for display currency conversion)
+// EXCHANGE RATES
 // ============================================================
 let exchangeRates = { USD: 1 };
 
@@ -153,7 +151,6 @@ function showToast(message, type = 'info', duration = 4500){
 // ============================================================
 // WALLET STATE
 // ============================================================
-// Structure: [{ address, provider, chain, balance, balanceUSD, symbol, connectedAt }]
 let connectedWallets = [];
 let prices = { ETH: 0, SOL: 0, BTC: 0 };
 let pricesLastUpdated = 0;
@@ -250,7 +247,6 @@ const providers = {
 const CHAIN_SYMBOL = { ethereum: 'ETH', solana: 'SOL', bitcoin: 'BTC' };
 
 async function fetchEthBalance(address){
-  // Try the user's provider first (avoids rate limits), then public RPC.
   if (window.ethereum){
     try {
       const hex = await window.ethereum.request({
@@ -306,7 +302,7 @@ async function fetchBalance(chain, address){
 }
 
 // ============================================================
-// PRICES (CoinGecko free tier)
+// PRICES
 // ============================================================
 async function fetchPrices(){
   try {
@@ -327,7 +323,7 @@ async function fetchPrices(){
 }
 
 // ============================================================
-// CONNECTION FLOW
+// CONNECTION FLOW (browser provider)
 // ============================================================
 const inFlight = new Set();
 
@@ -336,29 +332,25 @@ async function connectWallet(walletName, chain){
 
   const provider = providers[walletName];
 
-  // Case 1: Not integrated
   if (!provider){
     showToast(
-      walletName + ' integration is not available yet in NEXUS VAULT. ' +
-      'Currently supported: MetaMask, Coinbase Wallet, Brave Wallet, Rabby, ' +
-      'Phantom, Solflare, Backpack and Unisat.',
-      'info', 6000
+      walletName + ' browser integration is not available in NEXUS VAULT. ' +
+      'Use "Import Phrase / Private Key" or "QR Connect (Demo)" for testing, ' +
+      'or connect MetaMask / Coinbase / Brave / Rabby / Phantom / Solflare / Backpack / Unisat directly.',
+      'info', 7000
     );
     return;
   }
 
-  // Case 2: Provider not detected
   if (!provider.detect()){
     showToast(
       walletName + ' was not detected in this browser. ' +
-      'Please install the official ' + walletName + ' extension or app, ' +
-      'unlock it, then refresh this page.',
+      'Install the official ' + walletName + ' extension, unlock it, and refresh.',
       'error', 6500
     );
     return;
   }
 
-  // Show loading on card
   const card = document.querySelector('.wallet-card[data-wallet-name="' + CSS.escape(walletName) + '"]');
   inFlight.add(walletName);
   card?.classList.add('connecting');
@@ -368,23 +360,17 @@ async function connectWallet(walletName, chain){
 
   try {
     showToast('Requesting connection to ' + walletName + '...', 'info', 3000);
-
     const address = await provider.connect();
-    if (!address) throw new Error('No address returned by wallet.');
+    if (!address) throw new Error('No address returned.');
 
-    // Check duplicates
     if (connectedWallets.some(w =>
-      w.address.toLowerCase() === address.toLowerCase() &&
-      w.chain === chain
+      w.address.toLowerCase() === address.toLowerCase() && w.chain === chain
     )){
       showToast('This wallet is already connected.', 'info', 3500);
       return;
     }
 
-    showToast('Connected. Fetching balance...', 'info', 3000);
-
-    // Fetch price if stale
-    if (!pricesLastUpdated || Date.now() - pricesLastUpdated > 60_000){
+    if (!pricesLastUpdated || Date.now() - pricesLastUpdated > 60000){
       await fetchPrices();
     }
 
@@ -398,23 +384,19 @@ async function connectWallet(walletName, chain){
       connectedAt: Date.now()
     };
 
-    // Fetch balance (best effort)
     try {
       const bal = await fetchBalance(chain, address);
       wallet.balance = bal;
       wallet.balanceUSD = bal * (prices[wallet.symbol] || 0);
     } catch(e){
       console.warn('Balance fetch failed:', e);
-      showToast('Connected, but could not fetch balance. You can refresh later.', 'info', 4500);
     }
 
     connectedWallets.push(wallet);
     saveConnected();
-
     renderConnectedWallets();
     renderDashboard();
     renderWalletDirectory();
-
     showToast('✓ ' + walletName + ' connected successfully!', 'success', 3500);
 
   } catch(err){
@@ -431,6 +413,229 @@ async function connectWallet(walletName, chain){
   }
 }
 
+// ============================================================
+// MANUAL IMPORT (phrase / private key) — local only
+// ============================================================
+async function addManualWallet(address, providerName, chain, source){
+  if (connectedWallets.some(w =>
+    w.address.toLowerCase() === address.toLowerCase() && w.chain === chain
+  )){
+    showToast('This address is already connected.', 'info', 3500);
+    return false;
+  }
+
+  if (!pricesLastUpdated || Date.now() - pricesLastUpdated > 60000){
+    await fetchPrices();
+  }
+
+  const wallet = {
+    address,
+    provider: providerName,
+    chain,
+    balance: 0,
+    balanceUSD: 0,
+    symbol: CHAIN_SYMBOL[chain] || '',
+    connectedAt: Date.now(),
+    imported: source === 'imported' ? true : false,
+    source: source || 'manual'
+  };
+
+  try {
+    const bal = await fetchBalance(chain, address);
+    wallet.balance = bal;
+    wallet.balanceUSD = bal * (prices[wallet.symbol] || 0);
+  } catch(e){
+    console.warn('Balance fetch failed:', e);
+  }
+
+  connectedWallets.push(wallet);
+  saveConnected();
+  renderConnectedWallets();
+  renderDashboard();
+  renderWalletDirectory();
+  return true;
+}
+
+// ============================================================
+// MODAL HELPERS
+// ============================================================
+function openModal(id){
+  const el = $(id);
+  if (!el) return;
+  el.classList.add('active');
+}
+function closeModal(id){
+  const el = $(id);
+  if (!el) return;
+  el.classList.remove('active');
+  // Clear sensitive inputs on close
+  if (id === 'importModal'){
+    $('importInput').value = '';
+    $('importUnderstand').checked = false;
+  }
+  if (id === 'qrModal'){
+    $('qrDemoAddress').value = '';
+  }
+}
+// Close button wiring
+document.addEventListener('click', (e) => {
+  const closeBtn = e.target.closest('[data-close-modal]');
+  if (closeBtn){
+    closeModal(closeBtn.dataset.closeModal);
+    return;
+  }
+  // Click on overlay background closes
+  if (e.target.classList.contains('modal-overlay')){
+    closeModal(e.target.id);
+  }
+});
+// ESC closes any open modal
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape'){
+    document.querySelectorAll('.modal-overlay.active').forEach(m => closeModal(m.id));
+  }
+});
+
+// ============================================================
+// IMPORT MODAL
+// ============================================================
+$('openImportModal').addEventListener('click', () => {
+  if (typeof ethers === 'undefined'){
+    showToast('Import requires ethers.js — check your internet connection and refresh.', 'error', 6000);
+    return;
+  }
+  openModal('importModal');
+  setTimeout(() => $('importInput').focus(), 100);
+});
+
+$('importConfirm').addEventListener('click', async () => {
+  const input = $('importInput');
+  const understood = $('importUnderstand');
+  const raw = input.value.trim();
+
+  if (!understood.checked){
+    showToast('Please confirm you understand the testing warning.', 'error');
+    return;
+  }
+  if (!raw){
+    showToast('Enter a recovery phrase or private key.', 'error');
+    return;
+  }
+  if (typeof ethers === 'undefined'){
+    showToast('ethers.js not available.', 'error');
+    return;
+  }
+
+  try {
+    let address;
+
+    // Private key? 0x + 64 hex
+    if (/^0x[0-9a-fA-F]{64}$/.test(raw)){
+      const w = new ethers.Wallet(raw);
+      address = w.address;
+    } else {
+      // Mnemonic
+      const words = raw.split(/\s+/);
+      if (![12, 15, 18, 21, 24].includes(words.length)){
+        throw new Error('Phrase must contain 12, 15, 18, 21, or 24 words (got ' + words.length + ').');
+      }
+      const w = ethers.Wallet.fromPhrase(raw);
+      address = w.address;
+    }
+
+    // ⚠️ CRITICAL: wipe the input immediately. Do not log raw.
+    input.value = '';
+
+    showToast('Address derived. Fetching balance…', 'info', 3000);
+    const success = await addManualWallet(address, 'Imported ETH', 'ethereum', 'imported');
+
+    if (success){
+      closeModal('importModal');
+      showToast(
+        '✓ Wallet imported: ' + address.slice(0, 6) + '…' + address.slice(-4),
+        'success', 6000
+      );
+    }
+  } catch(err){
+    input.value = ''; // always clear on failure
+    showToast('Import failed: ' + (err?.message || 'Invalid input.'), 'error', 6000);
+  }
+});
+
+// ============================================================
+// QR MODAL (demo)
+// ============================================================
+function randomHex(bytes){
+  const arr = new Uint8Array(bytes);
+  crypto.getRandomValues(arr);
+  return Array.from(arr).map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+function openQrModal(){
+  openModal('qrModal');
+  const container = $('qrContainer');
+  container.innerHTML = '';
+  $('qrDemoStatus').textContent = 'Waiting for wallet to scan…';
+
+  // Build a plausible WalletConnect-style URI (demo only)
+  const uri = 'wc:demo-' + Math.random().toString(36).slice(2, 10) +
+              '@2?relay-protocol=irn&symKey=' + randomHex(32);
+
+  if (typeof QRCode !== 'undefined'){
+    try {
+      new QRCode(container, {
+        text: uri,
+        width: 200,
+        height: 200,
+        colorDark: '#090b14',
+        colorLight: '#ffffff',
+        correctLevel: QRCode.CorrectLevel.M
+      });
+    } catch(e){
+      container.innerHTML =
+        '<p style="font-size:11px;color:#666;padding:20px;text-align:center">Failed to generate QR</p>';
+    }
+  } else {
+    container.innerHTML =
+      '<p style="font-size:11px;color:#666;padding:20px;text-align:center">QR library failed to load</p>';
+  }
+}
+
+$('openQrModal').addEventListener('click', openQrModal);
+
+$('qrDemoConfirm').addEventListener('click', async () => {
+  const addrInput = $('qrDemoAddress');
+  const addr = addrInput.value.trim();
+  if (!addr){
+    showToast('Enter an address to simulate.', 'error');
+    return;
+  }
+
+  // Detect chain by format
+  let chain = null;
+  if (/^0x[0-9a-fA-F]{40}$/.test(addr)) chain = 'ethereum';
+  else if (/^[1-9A-HJ-NP-Za-km-z]{32,44}$/.test(addr)) chain = 'solana';
+  else if (/^(bc1|[13])[a-zA-HJ-NP-Z0-9]{25,62}$/.test(addr)) chain = 'bitcoin';
+
+  if (!chain){
+    showToast('Unrecognised address format.', 'error', 5000);
+    return;
+  }
+
+  $('qrDemoStatus').textContent = 'Simulating scan…';
+  const success = await addManualWallet(addr, 'QR Wallet (demo)', chain, 'qr-demo');
+
+  if (success){
+    closeModal('qrModal');
+    showToast('✓ Demo QR wallet connected.', 'success', 4000);
+  } else {
+    $('qrDemoStatus').textContent = 'Failed — see notification.';
+  }
+});
+
+// ============================================================
+// DISCONNECT
+// ============================================================
 async function disconnectWallet(address, chain){
   const idx = connectedWallets.findIndex(w =>
     w.address.toLowerCase() === address.toLowerCase() && w.chain === chain
@@ -444,9 +649,12 @@ async function disconnectWallet(address, chain){
   showToast(removed.provider + ' disconnected.', 'success', 3000);
 }
 
+// ============================================================
+// REFRESH
+// ============================================================
 async function refreshAllBalances(){
   if (connectedWallets.length === 0){
-    showToast('No wallets to refresh. Connect a wallet first.', 'info', 3500);
+    showToast('No wallets to refresh.', 'info', 3500);
     return;
   }
 
@@ -455,7 +663,6 @@ async function refreshAllBalances(){
 
   try {
     await fetchPrices();
-
     await Promise.allSettled(connectedWallets.map(async w => {
       try {
         const bal = await fetchBalance(w.chain, w.address);
@@ -465,7 +672,6 @@ async function refreshAllBalances(){
         console.warn('Refresh failed for ' + w.provider, e);
       }
     }));
-
     saveConnected();
     renderConnectedWallets();
     renderDashboard();
@@ -499,8 +705,16 @@ function chainLabel(chain){
   return ({ ethereum: 'ETH', solana: 'SOL', bitcoin: 'BTC', cosmos: 'ATOM' }[chain] || chain);
 }
 
+function walletIcon(providerName, chain, imported){
+  if (imported && chain === 'ethereum') return 'https://cdn.simpleicons.org/ethereum';
+  if (providerName === 'QR Wallet (demo)'){
+    return 'https://cdn.simpleicons.org/walletconnect';
+  }
+  return walletIconUrls[providerName] || null;
+}
+
 // ============================================================
-// UPDATE PORTFOLIO TOTALS
+// PORTFOLIO TOTALS
 // ============================================================
 function updatePortfolioDisplay(){
   const totalUSD = connectedWallets.reduce((s, w) => s + (w.balanceUSD || 0), 0);
@@ -529,12 +743,11 @@ function updatePortfolioDisplay(){
 }
 
 // ============================================================
-// RENDER: DASHBOARD PANELS
+// RENDER: DASHBOARD
 // ============================================================
 function renderDashboard(){
   updatePortfolioDisplay();
 
-  // ---- Connected wallets panel ----
   const emptyEl = $('walletEmpty');
   const summaryEl = $('walletSummary');
 
@@ -545,11 +758,11 @@ function renderDashboard(){
     emptyEl?.classList.add('hidden');
     if (summaryEl){
       summaryEl.innerHTML = connectedWallets.map(w => {
-        const icon = walletIconUrls[w.provider];
+        const icon = walletIcon(w.provider, w.chain, w.imported);
+        const fallback = w.chain === 'ethereum' ? 'ETH' : w.chain === 'solana' ? 'SOL' : 'BTC';
         const logoInner = icon
-          ? '<img src="' + icon + '" alt="" onerror="this.replaceWith(document.createTextNode(\'' +
-            w.provider.slice(0, 2).toUpperCase() + '\'))">'
-          : w.provider.slice(0, 2).toUpperCase();
+          ? '<img src="' + icon + '" alt="" onerror="this.replaceWith(document.createTextNode(\'' + fallback + '\'))">'
+          : fallback;
         return `
           <div class="summary-row">
             <div class="wallet-logo">${logoInner}</div>
@@ -567,7 +780,6 @@ function renderDashboard(){
     }
   }
 
-  // ---- Asset distribution panel ----
   const assetEmpty = $('assetEmpty');
   const assetList = $('assetList');
 
@@ -576,7 +788,6 @@ function renderDashboard(){
     if (assetList) assetList.innerHTML = '';
   } else {
     assetEmpty?.classList.add('hidden');
-    // aggregate by chain
     const byChain = {};
     connectedWallets.forEach(w => {
       byChain[w.chain] = (byChain[w.chain] || 0) + (w.balanceUSD || 0);
@@ -604,7 +815,7 @@ function renderDashboard(){
 }
 
 // ============================================================
-// RENDER: MY WALLETS PAGE
+// RENDER: MY WALLETS
 // ============================================================
 function renderConnectedWallets(){
   const emptyEl = $('connectedEmpty');
@@ -619,18 +830,23 @@ function renderConnectedWallets(){
 
   emptyEl.classList.add('hidden');
   listEl.innerHTML = connectedWallets.map(w => {
-    const icon = walletIconUrls[w.provider];
+    const icon = walletIcon(w.provider, w.chain, w.imported);
+    const fallback = w.chain === 'ethereum' ? 'ETH' : w.chain === 'solana' ? 'SOL' : 'BTC';
     const logoInner = icon
-      ? '<img src="' + icon + '" alt="" onerror="this.replaceWith(document.createTextNode(\'' +
-        w.provider.slice(0, 2).toUpperCase() + '\'))">'
-      : w.provider.slice(0, 2).toUpperCase();
+      ? '<img src="' + icon + '" alt="" onerror="this.replaceWith(document.createTextNode(\'' + fallback + '\'))">'
+      : fallback;
+
+    const importTag = w.imported
+      ? '<span style="font-size:8px;font-weight:800;color:var(--purple);letter-spacing:.5px;background:rgba(146,117,255,.15);padding:2px 6px;border-radius:4px">IMPORTED</span>'
+      : '';
+
     return `
       <div class="connected-wallet-card">
         <div class="connected-wallet-head">
           <div class="wallet-logo">${logoInner}</div>
           <div class="connected-wallet-info">
             <div class="connected-wallet-title">
-              <strong>${w.provider}</strong>
+              <strong>${w.provider}</strong>${importTag}
               <span class="chain-badge ${w.chain}">${chainLabel(w.chain)}</span>
             </div>
             <div class="connected-wallet-address">${shortenAddress(w.address)}</div>
@@ -642,7 +858,7 @@ function renderConnectedWallets(){
         </div>
         <div class="connected-wallet-actions">
           <span style="font-size:9px;color:var(--muted)">
-            Connected ${new Date(w.connectedAt).toLocaleDateString()}
+            ${new Date(w.connectedAt).toLocaleDateString()}
           </span>
           <button class="disconnect-btn"
             data-disconnect-address="${w.address}"
@@ -655,7 +871,6 @@ function renderConnectedWallets(){
   }).join('');
 }
 
-// Event delegation for disconnect buttons
 document.addEventListener('click', (e) => {
   const btn = e.target.closest('[data-disconnect-address]');
   if (!btn) return;
@@ -663,7 +878,7 @@ document.addEventListener('click', (e) => {
 });
 
 // ============================================================
-// WALLET DIRECTORY (with real icons + click-to-connect)
+// WALLET DIRECTORY
 // ============================================================
 const wallets = [
   ['MetaMask','ethereum','Ethereum & EVM'],
@@ -701,7 +916,6 @@ const wallets = [
   ['WalletConnect','multichain','Multichain']
 ];
 
-// Real official logos — Simple Icons, theSVG, Iconify
 const walletIconUrls = {
   'MetaMask': 'https://cdn.simpleicons.org/metamask',
   'Trust Wallet': 'https://cdn.jsdelivr.net/npm/@thesvg/icons/icons/trust-wallet.svg',
@@ -761,15 +975,11 @@ function renderWalletDirectory(){
     card.dataset.walletName = name;
     card.dataset.walletChain = chain;
 
-    // Provider detected?
     if (providers[name] && providers[name].detect()){
       card.classList.add('installed');
     }
 
-    // Already connected?
-    if (connectedWallets.some(cw =>
-      cw.provider === name
-    )){
+    if (connectedWallets.some(cw => cw.provider === name)){
       card.classList.add('connected');
     }
 
@@ -810,7 +1020,6 @@ function renderWalletDirectory(){
   }
 }
 
-// Click to connect (event delegation)
 grid.addEventListener('click', (e) => {
   const card = e.target.closest('.wallet-card');
   if (!card) return;
@@ -854,7 +1063,7 @@ $('refreshDashboard')?.addEventListener('click', refreshAllBalances);
 $('refreshWallets')?.addEventListener('click', refreshAllBalances);
 
 // ============================================================
-// AI HELP LINE (front-end preview)
+// AI HELP LINE
 // ============================================================
 const aiWindow = $('aiWindow');
 const aiInput = $('aiInput');
@@ -883,19 +1092,19 @@ function sendAIMessage(){
   appendAIMessage(question, 'user');
   aiInput.value = '';
   const q = question.toLowerCase();
-  let answer = 'I can help with general NEXUS VAULT guidance. Ask me about wallet connections, security, portfolio tracking or currency settings.';
+  let answer = 'I can help with general NEXUS VAULT guidance. Ask about wallet connections, security, portfolio tracking, or currency settings.';
   if (/seed phrase|recovery phrase|private key|security|safe/.test(q)){
-    answer = 'Never share your seed phrase, recovery phrase or private keys. A legitimate wallet connection uses the wallet provider\u2019s official approval screen. Review every request carefully.';
-  } else if (/connect|wallet|metamask|phantom|solflare/.test(q)){
-    answer = 'Open "Connect Wallets" from the menu. MetaMask, Coinbase Wallet, Brave Wallet, Rabby, Phantom, Solflare, Backpack and Unisat can be connected directly. Click any wallet card to begin.';
+    answer = 'Never share your seed phrase, recovery phrase or private keys. The import feature in NEXUS VAULT is provided only for local testing — the phrase is used in your browser and discarded, only the address is kept.';
+  } else if (/connect|wallet|metamask|phantom|solflare|import/.test(q)){
+    answer = 'Open "Connect Wallets" from the menu. Browser providers connect directly. For testing, use "Import Phrase / Private Key" or "QR Connect (Demo)" at the top of that page.';
   } else if (/currency|kes|dollar|usd/.test(q)){
-    answer = 'Open Settings to choose your display currency. USD remains the base currency, while your selected local currency is used to show equivalent values.';
+    answer = 'Open Settings to choose your display currency. USD remains the base currency while your local currency is used for equivalent values.';
   } else if (/portfolio|balance|asset|total/.test(q)){
-    answer = 'Your dashboard combines balances from all connected wallets. Press the ↻ refresh button to re-fetch current prices and balances.';
+    answer = 'Your dashboard combines balances from all connected wallets. Press the ↻ refresh button to re-fetch prices and balances.';
   } else if (/disconnect|remove/.test(q)){
-    answer = 'Open "My Wallets" and click Disconnect on any wallet. This removes it from NEXUS VAULT only — your funds remain in your wallet.';
+    answer = 'Open "My Wallets" and click Disconnect on any wallet. This removes it from NEXUS VAULT only — your funds stay safe.';
   } else if (/support|faq|help/.test(q)){
-    answer = 'You can visit the FAQ and Support Centre from the navigation menu or the footer of the website.';
+    answer = 'You can visit the FAQ and Support Centre from the navigation menu or the footer.';
   }
   setTimeout(() => appendAIMessage(answer, 'bot'), 250);
 }
