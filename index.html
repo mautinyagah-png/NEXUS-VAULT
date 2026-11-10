@@ -4,976 +4,946 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#090b14">
+<meta name="theme-color" content="#10101d">
 <title>NEXUS VAULT — Your Crypto, Unified</title>
+<meta name="description" content="Your entire crypto world. One powerful view.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<!-- Neural N favicon -->
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cg fill='none' stroke='%239b8cff' stroke-width='2' opacity='.65'%3E%3Cpath d='M8 18L28 32L13 67L38 83M28 32L70 12L88 35L75 69L93 85M70 12L62 48L75 69'/%3E%3C/g%3E%3Cg fill='%239b8cff'%3E%3Ccircle cx='8' cy='18' r='4'/%3E%3Ccircle cx='28' cy='32' r='4'/%3E%3Ccircle cx='13' cy='67' r='3'/%3E%3Ccircle cx='38' cy='83' r='3'/%3E%3Ccircle cx='70' cy='12' r='4'/%3E%3Ccircle cx='88' cy='35' r='3'/%3E%3Ccircle cx='75' cy='69' r='4'/%3E%3Ccircle cx='93' cy='85' r='3'/%3E%3C/g%3E%3Ctext x='50' y='70' font-family='Arial' font-size='64' font-weight='bold' text-anchor='middle' fill='white'%3EN%3C/text%3E%3C/svg%3E">
 
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
-
-:root {
-  color-scheme: dark;
-  --bg:#090b14;
-  --surface:#101522;
-  --surface2:#151c2b;
-  --surface3:#1b2435;
-  --border:#252e40;
-  --text:#f5f6fc;
-  --muted:#929db1;
-  --subtle:#68758b;
-  --purple:#9275ff;
-  --purple2:#7154e9;
-  --blue:#5486ff;
-  --green:#48c995;
-  --shadow:0 15px 45px rgba(0,0,0,.18);
+:root{
+  --bg:#0c0d18;
+  --surface:#141625;
+  --surface2:#1b1e30;
+  --surface3:#22253a;
+  --text:#f4f4fb;
+  --muted:#9699b1;
+  --border:rgba(255,255,255,.085);
+  --purple:#9b83ff;
+  --purple2:#7759f6;
+  --blue:#63a5ff;
+  --green:#4bd5a0;
+  --red:#ff777e;
+  --shadow:0 18px 60px rgba(0,0,0,.25);
 }
-
-body.light {
-  color-scheme:light;
-  --bg:#f4f6fb;
+body.light{
+  --bg:#f5f6fb;
   --surface:#ffffff;
-  --surface2:#f8f9fd;
-  --surface3:#edf0f7;
-  --border:#e1e5ee;
-  --text:#172033;
-  --muted:#68748a;
-  --subtle:#929caf;
-  --purple:#7455dc;
-  --purple2:#6444d2;
-  --blue:#426fe1;
-  --green:#159968;
-  --shadow:0 12px 35px rgba(30,45,75,.07);
+  --surface2:#f0f1f8;
+  --surface3:#e7e9f3;
+  --text:#17182a;
+  --muted:#6e7188;
+  --border:rgba(31,34,61,.11);
+  --purple:#7253df;
+  --purple2:#6546d5;
+  --blue:#397edb;
+  --green:#159d70;
+  --red:#d94e60;
+  --shadow:0 16px 45px rgba(30,32,65,.08);
 }
-
 *{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
 body{
   background:var(--bg);
   color:var(--text);
-  font-family:Inter,sans-serif;
+  font-family:'DM Sans',sans-serif;
   min-height:100vh;
   transition:background .25s,color .25s;
 }
-button,input,select{font:inherit}
+button,input,select,textarea{font:inherit}
 button{cursor:pointer}
-button:focus-visible,input:focus-visible,select:focus-visible{
-  outline:2px solid var(--purple);outline-offset:3px
-}
-.hidden{display:none!important}
-.container{width:min(1160px,92%);margin:auto}
-
-/* HEADER */
-
-header{
+a{color:inherit;text-decoration:none}
+.app{min-height:100vh}
+.topbar{
   height:76px;
-  background:var(--surface);
-  border-bottom:1px solid var(--border);
-  position:sticky;top:0;z-index:20;
-}
-.nav{
-  height:100%;
   display:flex;
   align-items:center;
   justify-content:space-between;
+  padding:0 5.5%;
+  border-bottom:1px solid var(--border);
+  background:var(--bg);
+  position:sticky;
+  top:0;
+  z-index:30;
 }
 .brand{
-  border:0;background:none;color:var(--text);
-  display:flex;align-items:center;gap:11px;
-  cursor:pointer;
+  display:flex;
+  align-items:center;
+  gap:11px;
+  border:0;
+  background:none;
+  color:var(--text);
+  text-align:left;
 }
-.logo{
-  width:41px;height:41px;
-  display:grid;place-items:center;
+.brand-icon{
+  width:42px;height:42px;
   border-radius:13px;
-  color:white;font-size:22px;font-weight:900;
-  background:linear-gradient(135deg,#a58aff,#526fff);
-  box-shadow:0 5px 20px #7455dc35;
+  display:grid;place-items:center;
+  background:linear-gradient(145deg,#252044,#111322);
+  position:relative;overflow:hidden;
+  box-shadow:0 5px 22px rgba(132,104,255,.18);
 }
+.brand-icon svg{width:40px;height:40px;position:relative;z-index:1}
 .brand-name{
-  font-size:17px;font-weight:900;
-  letter-spacing:1px;
+  font-family:'Space Grotesk',sans-serif;
+  font-size:17px;
+  font-weight:700;
+  letter-spacing:1.5px;
 }
 .brand-name span{color:var(--purple)}
-.nav-right{display:flex;align-items:center;gap:12px}
-.nav-pill{
-  padding:9px 13px;
+.top-actions{display:flex;align-items:center;gap:10px}
+.icon-btn{
+  width:41px;height:41px;
   border:1px solid var(--border);
-  border-radius:30px;
-  color:var(--muted);font-size:10px;
-}
-.icon-button{
-  width:40px;height:40px;
+  background:var(--surface);
+  color:var(--text);
+  border-radius:13px;
   display:grid;place-items:center;
-  border:1px solid var(--border);
-  border-radius:11px;
-  background:var(--surface2);
-  color:var(--text);font-size:18px;
+  font-size:17px;
 }
-.icon-button:hover{border-color:var(--purple)}
-
-/* INTRO */
-
-main{padding:35px 0 65px}
-.hero{
-  position:relative;
-  overflow:hidden;
-  padding:50px 45px;
-  min-height:330px;
-  border:1px solid var(--border);
-  border-radius:23px;
-  background:
-    radial-gradient(ellipse at 80% 15%,rgba(129,94,255,.23),transparent 43%),
-    radial-gradient(ellipse at 95% 90%,rgba(53,112,255,.13),transparent 40%),
-    var(--surface);
-  box-shadow:var(--shadow);
-}
-body.light .hero{
-  background:
-    radial-gradient(ellipse at 85% 10%,rgba(139,110,255,.13),transparent 45%),
-    radial-gradient(ellipse at 95% 90%,rgba(73,127,255,.08),transparent 45%),
-    #fff;
-}
-.hero-content{position:relative;z-index:2;max-width:680px}
-.eyebrow{
-  color:var(--purple);
-  font-size:10px;font-weight:800;
-  letter-spacing:2px;margin-bottom:22px;
-}
-.hero h1{
-  font-size:clamp(43px,7vw,76px);
-  line-height:1.06;
-  font-weight:900;
-  letter-spacing:-4px;
-}
-.hero h1 span{
-  background:linear-gradient(95deg,#aa91ff,#6e91ff);
-  color:transparent;background-clip:text;
-}
-.hero-description{
-  font-size:13px;line-height:1.9;
-  color:var(--muted);
-  max-width:520px;margin-top:19px;
-}
-.hero-actions{
-  display:flex;align-items:center;
-  flex-wrap:wrap;gap:13px;margin-top:26px;
-}
+.icon-btn:hover,.secondary-btn:hover{border-color:var(--purple)}
 .primary-btn{
-  padding:14px 21px;
-  color:white;border:0;border-radius:11px;
-  background:linear-gradient(110deg,#8969f5,#586ff0);
-  font-size:12px;font-weight:800;
-  box-shadow:0 8px 22px #7759e534;
+  border:0;
+  background:linear-gradient(110deg,var(--purple2),#9278ff);
+  color:white;
+  border-radius:13px;
+  padding:13px 20px;
+  font-weight:700;
+  box-shadow:0 8px 25px rgba(126,94,245,.22);
   transition:.2s;
 }
-.primary-btn:hover{transform:translateY(-2px);filter:brightness(1.1)}
+.primary-btn:hover{transform:translateY(-2px);filter:brightness(1.08)}
 .secondary-btn{
-  padding:13px 18px;border-radius:11px;
   border:1px solid var(--border);
-  background:var(--surface2);color:var(--text);
-  font-size:11px;font-weight:600;
-}
-.hero-art{
-  position:absolute;
-  right:7%;top:50%;
-  transform:translateY(-50%);
-  width:235px;height:235px;
-  display:grid;place-items:center;
-  border-radius:50%;
-  border:1px solid rgba(151,125,255,.23);
-  background:radial-gradient(circle,rgba(132,104,255,.14),transparent 68%);
-}
-.hero-art::before,.hero-art::after{
-  content:"";position:absolute;
-  border:1px solid rgba(151,125,255,.20);
-  border-radius:50%;
-}
-.hero-art::before{inset:20px}
-.hero-art::after{inset:-22px}
-.hero-symbol{
-  width:105px;height:105px;
-  border-radius:30px;
-  display:grid;place-items:center;
-  background:linear-gradient(140deg,#987aff,#4e70ef);
-  box-shadow:0 15px 55px #7559e555;
-  color:white;font-size:48px;font-weight:900;
-  transform:rotate(-9deg);
-}
-
-/* PORTFOLIO */
-
-.section{margin-top:28px}
-.section-head{
-  display:flex;justify-content:space-between;
-  align-items:center;gap:15px;margin-bottom:15px;
-}
-.section-head h2{font-size:16px;font-weight:800}
-.section-head p{font-size:10px;color:var(--muted);margin-top:5px}
-.text-btn{
-  background:none;border:0;color:var(--purple);
-  font-size:11px;font-weight:700;
-}
-.portfolio{
-  display:grid;grid-template-columns:1.3fr 1fr 1fr;
-  gap:14px;
-}
-.portfolio-card{
   background:var(--surface);
-  border:1px solid var(--border);
-  border-radius:16px;padding:21px;
-  box-shadow:var(--shadow);
-  min-width:0;
+  color:var(--text);
+  border-radius:13px;
+  padding:12px 18px;
+  font-weight:600;
 }
-.portfolio-card.primary{
-  background:
-    radial-gradient(ellipse at 95% 0%,rgba(132,99,255,.18),transparent 55%),
-    var(--surface);
-}
-.card-label{
-  color:var(--muted);font-size:10px;
-  font-weight:700;letter-spacing:.5px;
-}
-.total-value{
-  font-size:clamp(27px,4vw,37px);
-  font-weight:800;letter-spacing:-1.5px;
-  margin-top:13px;overflow-wrap:anywhere;
-}
-.local-value{
-  color:var(--muted);font-size:11px;margin-top:8px;
-}
-.card-foot{
-  font-size:10px;color:var(--subtle);margin-top:17px;
-}
-.stat-number{font-size:29px;font-weight:800;margin-top:16px}
-.stat-description{font-size:10px;color:var(--muted);margin-top:7px}
-
-/* ASSET AND WALLET PANELS */
-
-.two-columns{
-  display:grid;grid-template-columns:1.3fr 1fr;
-  gap:15px;
-}
-.panel{
-  background:var(--surface);
-  border:1px solid var(--border);
-  border-radius:16px;padding:21px;
-  box-shadow:var(--shadow);
-  min-width:0;
-}
-.panel-heading{
-  display:flex;align-items:center;
-  justify-content:space-between;margin-bottom:20px;
-}
-.panel-heading h3{font-size:13px;font-weight:800}
-.panel-heading span{font-size:10px;color:var(--muted)}
-.empty{
-  min-height:125px;display:flex;
-  flex-direction:column;justify-content:center;
-  align-items:center;text-align:center;
-}
-.empty-icon{
-  width:43px;height:43px;border-radius:13px;
-  display:grid;place-items:center;
-  background:var(--surface3);font-size:20px;
-  margin-bottom:12px;
-}
-.empty h4{font-size:12px;margin-bottom:7px}
-.empty p{font-size:10px;color:var(--muted);line-height:1.8}
-
-/* PAGES */
-
-.page{display:none}
+.page{display:none;max-width:1190px;margin:auto;padding:55px 5.5% 90px}
 .page.active{display:block}
-.page-title{font-size:28px;font-weight:800;letter-spacing:-1px}
-.page-subtitle{
-  color:var(--muted);font-size:12px;
-  line-height:1.8;margin:9px 0 25px;
+.hero{
+  min-height:390px;
+  display:flex;
+  align-items:center;
+  position:relative;
+  overflow:hidden;
+  padding:42px 0 54px;
 }
-.back-btn{
-  color:var(--purple);background:none;
-  border:0;font-size:11px;margin-bottom:24px;
+.hero:before{
+  content:"";
+  position:absolute;
+  width:460px;height:460px;
+  border-radius:50%;
+  background:radial-gradient(circle,rgba(124,93,255,.19),transparent 68%);
+  right:-90px;top:-70px;
+  pointer-events:none;
 }
-
-/* DIRECTORY */
-
+.hero-content{max-width:690px;position:relative;z-index:1}
+.eyebrow{
+  color:var(--purple);
+  font-size:12px;
+  font-weight:800;
+  letter-spacing:2.4px;
+  text-transform:uppercase;
+  margin-bottom:22px;
+}
+.hero h1{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:clamp(43px,6.3vw,76px);
+  line-height:1.04;
+  letter-spacing:-3.5px;
+  max-width:750px;
+  margin-bottom:22px;
+}
+.gradient-text{
+  background:linear-gradient(100deg,#a995ff,#70b7ff);
+  -webkit-background-clip:text;
+  background-clip:text;
+  color:transparent;
+}
+.hero p{
+  max-width:510px;
+  font-size:16px;
+  line-height:1.8;
+  color:var(--muted);
+  margin-bottom:29px;
+}
+.hero-actions{display:flex;gap:12px;flex-wrap:wrap}
+.hero-note{margin-top:19px;font-size:12px;color:var(--muted)}
+.hero-note span{color:var(--green);margin-right:6px}
+.section-heading{
+  display:flex;justify-content:space-between;align-items:center;
+  gap:15px;margin-bottom:18px;
+}
+.section-heading h2,.page-title{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:24px;letter-spacing:-.6px;
+}
+.section-heading p{font-size:13px;color:var(--muted);margin-top:5px}
+.portfolio-preview{
+  background:linear-gradient(120deg,var(--surface),var(--surface2));
+  border:1px solid var(--border);
+  border-radius:22px;
+  padding:25px;
+  box-shadow:var(--shadow);
+  margin-top:16px;
+}
+.preview-top{display:flex;justify-content:space-between;align-items:center;gap:15px}
+.preview-label{font-size:13px;color:var(--muted)}
+.preview-value{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:clamp(34px,5vw,49px);
+  font-weight:700;
+  letter-spacing:-1.8px;
+  margin:13px 0 6px;
+}
+.preview-sub{font-size:12px;color:var(--muted)}
+.preview-stats{
+  display:grid;grid-template-columns:repeat(3,1fr);
+  gap:12px;margin-top:27px;
+}
+.stat{
+  background:var(--surface2);
+  border:1px solid var(--border);
+  padding:16px;border-radius:14px;
+}
+.stat span{display:block;color:var(--muted);font-size:12px;margin-bottom:8px}
+.stat strong{font-size:18px}
+.status-dot{
+  display:inline-block;width:7px;height:7px;border-radius:50%;
+  background:var(--green);margin-right:6px;
+}
+.footer{
+  border-top:1px solid var(--border);
+  padding:25px 5.5%;
+  color:var(--muted);
+  font-size:12px;
+  display:flex;justify-content:space-between;gap:15px;flex-wrap:wrap;
+}
+.footer-links{display:flex;gap:20px;flex-wrap:wrap}
+.footer a:hover{color:var(--purple)}
+/* Drawer */
+.drawer-backdrop{
+  display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);
+  z-index:49;
+}
+.drawer-backdrop.show{display:block}
+.drawer{
+  position:fixed;z-index:50;left:0;top:0;bottom:0;width:290px;
+  background:var(--surface);border-right:1px solid var(--border);
+  padding:25px 19px;transform:translateX(-105%);
+  transition:transform .25s;box-shadow:var(--shadow);
+}
+.drawer.open{transform:translateX(0)}
+.drawer-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:34px}
+.drawer-label{font-size:10px;color:var(--muted);letter-spacing:2px;margin:25px 10px 10px}
+.nav-item{
+  display:flex;align-items:center;gap:13px;width:100%;
+  padding:13px 12px;border:0;border-radius:11px;
+  background:transparent;color:var(--muted);text-align:left;
+  margin:3px 0;font-weight:600;
+}
+.nav-item:hover,.nav-item.selected{background:var(--surface2);color:var(--text)}
+.nav-icon{width:23px;text-align:center;font-size:17px}
+.drawer-bottom{position:absolute;bottom:22px;left:20px;right:20px;color:var(--muted);font-size:11px;line-height:1.6}
+/* Wallet directory */
+.page-header{margin-bottom:28px}
+.page-header p{color:var(--muted);font-size:14px;margin-top:9px;line-height:1.7}
 .search-box{
-  width:100%;padding:14px 15px;
-  border:1px solid var(--border);
-  border-radius:11px;
-  background:var(--surface);
-  color:var(--text);font-size:12px;
-  margin-bottom:15px;
+  display:flex;align-items:center;gap:10px;
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:13px;padding:0 14px;margin:22px 0 15px;
 }
-.filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px}
+.search-box input{
+  width:100%;height:48px;border:0;outline:0;
+  background:transparent;color:var(--text);
+}
+.filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:25px}
 .filter{
-  border:1px solid var(--border);
-  border-radius:30px;padding:9px 13px;
+  padding:9px 13px;border:1px solid var(--border);
   background:var(--surface);color:var(--muted);
-  font-size:10px;
+  border-radius:30px;font-size:12px;font-weight:600;
 }
-.filter.active{background:var(--surface3);color:var(--purple);border-color:var(--purple)}
-.wallet-grid{
-  display:grid;grid-template-columns:repeat(4,1fr);gap:12px;
-}
+.filter.active{background:rgba(137,111,255,.14);color:var(--purple);border-color:var(--purple)}
+.wallet-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:13px}
 .wallet-card{
   display:flex;align-items:center;gap:12px;
-  background:var(--surface);
-  border:1px solid var(--border);
-  padding:15px;border-radius:13px;
-  min-width:0;transition:.2s;
+  padding:15px;background:var(--surface);
+  border:1px solid var(--border);border-radius:15px;
+  transition:.2s;
 }
 .wallet-card:hover{border-color:var(--purple);transform:translateY(-2px)}
 .wallet-logo{
-  width:39px;height:39px;flex-shrink:0;
-  border-radius:12px;
-  display:grid;place-items:center;
-  background:var(--surface3);
-  overflow:hidden;font-weight:800;font-size:12px;
-  color:var(--purple);
+  width:42px;height:42px;flex-shrink:0;border-radius:12px;
+  display:grid;place-items:center;background:var(--surface2);
+  overflow:hidden;font-weight:800;font-size:13px;color:var(--text);
 }
-.wallet-logo img{width:26px;height:26px;object-fit:contain}
-.wallet-name{font-size:11px;font-weight:700}
-.wallet-type{font-size:9px;color:var(--muted);margin-top:5px}
-
-/* SETTINGS */
-
-.settings-list{max-width:700px;display:grid;gap:12px}
-.setting{
-  background:var(--surface);
-  border:1px solid var(--border);
-  border-radius:13px;padding:18px;
-  display:flex;align-items:center;
-  justify-content:space-between;gap:15px;
+.wallet-logo img{width:27px;height:27px;object-fit:contain}
+.wallet-card strong{font-size:13px;display:block}
+.wallet-card small{font-size:11px;color:var(--muted);display:block;margin-top:4px}
+.wallet-card .arrow{margin-left:auto;color:var(--muted)}
+.empty-state{
+  grid-column:1/-1;text-align:center;padding:45px 15px;
+  color:var(--muted);background:var(--surface);border-radius:15px;
 }
-.setting h4{font-size:12px;margin-bottom:6px}
-.setting p{font-size:10px;color:var(--muted);line-height:1.7}
-.setting select{
-  padding:10px 12px;
-  background:var(--surface2);color:var(--text);
-  border:1px solid var(--border);
-  border-radius:9px;font-size:11px;
-  max-width:175px;
+/* Wallets and dashboard */
+.panel{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:18px;padding:22px;margin-bottom:18px;
 }
-
-/* DRAWER */
-
-.overlay{
-  position:fixed;inset:0;background:#0009;
-  z-index:40;opacity:0;visibility:hidden;
-  transition:.25s;
+.panel h3{font-family:'Space Grotesk',sans-serif;font-size:17px;margin-bottom:7px}
+.panel-desc{font-size:12px;color:var(--muted);line-height:1.6}
+.connected-empty{
+  text-align:center;padding:40px 15px;color:var(--muted);
 }
-.overlay.active{opacity:1;visibility:visible}
-.drawer{
-  position:fixed;top:0;bottom:0;left:0;
-  width:min(315px,86vw);z-index:41;
-  background:var(--surface);
-  border-right:1px solid var(--border);
-  padding:23px;
-  transform:translateX(-105%);
-  transition:.28s ease;
+.connected-empty .empty-icon{font-size:31px;margin-bottom:13px}
+.connected-empty p{font-size:13px;margin:9px 0 17px}
+.notice{
+  padding:14px 16px;border-radius:12px;
+  background:rgba(139,116,255,.09);
+  border:1px solid rgba(139,116,255,.2);
+  color:var(--muted);font-size:12px;line-height:1.6;
 }
-.drawer.active{transform:translateX(0)}
-.drawer-head{
-  display:flex;justify-content:space-between;
-  align-items:center;margin-bottom:38px;
+/* FAQ */
+.faq-list{display:grid;gap:10px;margin-top:25px}
+.faq-item{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:14px;overflow:hidden;
 }
-.drawer-label{
-  font-size:9px;font-weight:800;
-  letter-spacing:1.6px;color:var(--subtle);
-  margin:24px 0 11px;
+.faq-question{
+  width:100%;display:flex;justify-content:space-between;align-items:center;
+  gap:15px;padding:18px;border:0;background:transparent;
+  color:var(--text);text-align:left;font-weight:700;font-size:14px;
 }
-.drawer-link{
-  display:flex;align-items:center;gap:13px;
-  width:100%;padding:13px;
-  background:none;border:0;
-  color:var(--muted);border-radius:10px;
-  text-align:left;font-size:12px;
-  margin-bottom:4px;
+.faq-answer{
+  display:none;padding:0 18px 18px;
+  color:var(--muted);font-size:13px;line-height:1.8;
 }
-.drawer-link:hover,.drawer-link.active{
-  color:var(--text);background:var(--surface3);
+.faq-item.open .faq-answer{display:block}
+.faq-item.open .faq-plus{transform:rotate(45deg)}
+.faq-plus{color:var(--purple);font-size:21px;transition:.2s}
+/* Support */
+.support-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:15px;margin-top:25px}
+.support-card{
+  padding:22px;background:var(--surface);border:1px solid var(--border);
+  border-radius:16px;
 }
-.drawer-link .mi{font-size:17px;width:22px;text-align:center}
-.drawer-bottom{
-  position:absolute;bottom:23px;left:23px;right:23px;
-  border-top:1px solid var(--border);
-  padding-top:17px;font-size:10px;
-  line-height:1.8;color:var(--subtle);
+.support-card .support-icon{font-size:24px;margin-bottom:14px}
+.support-card h3{font-size:16px;margin-bottom:8px}
+.support-card p{color:var(--muted);font-size:12px;line-height:1.7}
+.support-card .support-status{font-size:11px;color:var(--purple);margin-top:14px}
+/* Settings */
+.settings-row{
+  display:flex;align-items:center;justify-content:space-between;
+  gap:20px;padding:18px 0;border-bottom:1px solid var(--border);
 }
-
-/* FOOTER */
-
-footer{
-  border-top:1px solid var(--border);
-  padding:24px 0;color:var(--muted);font-size:10px;
+.settings-row:last-child{border-bottom:0}
+.settings-row strong{font-size:14px}
+.settings-row p{font-size:12px;color:var(--muted);margin-top:5px;line-height:1.5}
+.settings-select{
+  min-width:145px;padding:10px;border-radius:10px;
+  border:1px solid var(--border);background:var(--surface2);color:var(--text);
 }
-.footer-inner{
-  display:flex;justify-content:space-between;
-  align-items:center;gap:12px;flex-wrap:wrap;
+/* AI help */
+.ai-float{
+  position:fixed;right:25px;bottom:25px;z-index:40;
+  width:61px;height:61px;border-radius:20px;border:0;color:white;
+  background:linear-gradient(140deg,#a18aff,#6750e8);
+  box-shadow:0 12px 35px rgba(121,91,245,.4);
+  font-size:24px;display:grid;place-items:center;
+  transition:.2s;
 }
-
-/* MOBILE */
-
-@media(max-width:850px){
-  .hero-art{right:5%;width:175px;height:175px}
-  .hero-symbol{width:78px;height:78px;font-size:35px}
-  .wallet-grid{grid-template-columns:repeat(3,1fr)}
+.ai-float:hover{transform:translateY(-4px) scale(1.03)}
+.ai-tooltip{
+  position:fixed;right:98px;bottom:42px;z-index:39;
+  background:var(--surface);border:1px solid var(--border);
+  padding:10px 13px;border-radius:10px;font-size:12px;
+  color:var(--text);box-shadow:var(--shadow);
 }
-@media(max-width:650px){
-  header{height:68px}
-  .nav-pill{display:none}
-  main{padding-top:22px}
-  .hero{padding:36px 24px;min-height:0}
-  .hero h1{font-size:clamp(39px,10vw,58px);letter-spacing:-2.5px}
-  .hero-art{display:none}
-  .portfolio{grid-template-columns:1fr 1fr}
-  .portfolio-card.primary{grid-column:span 2}
-  .two-columns{grid-template-columns:1fr}
+.ai-window{
+  display:none;position:fixed;right:25px;bottom:100px;z-index:45;
+  width:min(370px,calc(100vw - 30px));height:490px;max-height:70vh;
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:20px;box-shadow:var(--shadow);overflow:hidden;
+}
+.ai-window.open{display:flex;flex-direction:column}
+.ai-head{
+  padding:16px;background:linear-gradient(110deg,#28204b,#17182b);
+  color:white;display:flex;justify-content:space-between;align-items:center;
+}
+.ai-head small{display:block;color:#c4b9ff;font-size:11px;margin-top:4px}
+.ai-messages{padding:15px;flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:12px}
+.chat-msg{
+  max-width:88%;padding:11px 13px;border-radius:13px;
+  font-size:12px;line-height:1.65;
+}
+.chat-msg.bot{align-self:flex-start;background:var(--surface2);color:var(--text)}
+.chat-msg.user{align-self:flex-end;background:var(--purple2);color:white}
+.ai-suggestions{display:flex;gap:6px;flex-wrap:wrap;padding:0 13px 12px}
+.ai-suggestions button{
+  border:1px solid var(--border);background:var(--surface2);
+  color:var(--muted);font-size:10px;padding:7px 9px;border-radius:20px;
+}
+.ai-input-area{padding:12px;border-top:1px solid var(--border);display:flex;gap:8px}
+.ai-input-area input{
+  flex:1;min-width:0;padding:11px;border:1px solid var(--border);
+  border-radius:10px;background:var(--surface2);color:var(--text);outline:0;
+}
+.ai-input-area button{width:42px;border:0;border-radius:10px;background:var(--purple2);color:white}
+.ai-disclaimer{font-size:9px;color:var(--muted);padding:0 13px 10px;text-align:center}
+.toast{
+  position:fixed;left:50%;bottom:25px;transform:translate(-50%,20px);
+  opacity:0;pointer-events:none;background:var(--surface3);
+  color:var(--text);padding:12px 17px;border:1px solid var(--border);
+  border-radius:12px;z-index:100;font-size:12px;transition:.25s;
+  box-shadow:var(--shadow);
+}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+@media(max-width:800px){
   .wallet-grid{grid-template-columns:repeat(2,1fr)}
+  .hero{min-height:350px}
 }
-@media(max-width:390px){
+@media(max-width:560px){
+  .topbar{height:66px;padding:0 17px}
+  .brand-name{font-size:14px}
+  .brand-icon{width:37px;height:37px}
+  .top-actions .top-connect{display:none}
+  .page{padding:38px 18px 75px}
+  .hero{min-height:360px;padding:25px 0 42px}
+  .hero h1{letter-spacing:-2px;font-size:47px}
+  .hero p{font-size:14px}
+  .preview-stats{grid-template-columns:1fr}
+  .stat{display:flex;justify-content:space-between;align-items:center}
+  .stat span{margin:0}
   .wallet-grid{grid-template-columns:1fr}
-  .portfolio{grid-template-columns:1fr}
-  .portfolio-card.primary{grid-column:auto}
-  .hero{padding:30px 19px}
+  .support-grid{grid-template-columns:1fr}
+  .footer{padding:22px 18px}
+  .ai-float{right:17px;bottom:17px}
+  .ai-window{right:10px;bottom:88px}
 }
 </style>
 </head>
 
 <body>
+<div class="app">
 
-<header>
-  <div class="container nav">
-    <button class="brand" id="brandMenu" aria-label="Open menu">
-      <div class="logo">N</div>
-      <div class="brand-name">NEXUS <span>VAULT</span></div>
-    </button>
-    <div class="nav-right">
-      <div class="nav-pill" id="currencyLabel">USD · BASE CURRENCY</div>
-      <button class="icon-button" id="settingsShortcut" aria-label="Settings">⚙</button>
-    </div>
+<header class="topbar">
+  <button class="brand" onclick="toggleDrawer()" aria-label="Open navigation">
+    <span class="brand-icon">
+      <svg viewBox="0 0 76 76" aria-hidden="true">
+        <g stroke="#a18aff" stroke-width="1.5" opacity=".45" fill="none">
+          <path d="M7 15L24 27L13 49L31 61M24 27L49 11L65 25L56 49L69 61M49 11L48 36L56 49"/>
+        </g>
+        <g fill="#a18aff" opacity=".65">
+          <circle cx="7" cy="15" r="2.5"/><circle cx="24" cy="27" r="2.5"/>
+          <circle cx="13" cy="49" r="2"/><circle cx="31" cy="61" r="2"/>
+          <circle cx="49" cy="11" r="2.5"/><circle cx="65" cy="25" r="2"/>
+          <circle cx="56" cy="49" r="2.5"/><circle cx="69" cy="61" r="2"/>
+        </g>
+        <text x="38" y="54" text-anchor="middle" font-size="45" font-weight="800"
+          font-family="Arial,sans-serif" fill="#fff" stroke="#17162b"
+          stroke-width="1.5" paint-order="stroke">N</text>
+      </svg>
+    </span>
+    <span class="brand-name">NEXUS <span>VAULT</span></span>
+  </button>
+
+  <div class="top-actions">
+    <button class="icon-btn" onclick="toggleTheme()" title="Toggle theme" aria-label="Toggle theme">☼</button>
+    <button class="primary-btn top-connect" onclick="showPage('wallets')">Connect Wallets</button>
   </div>
 </header>
 
-<div class="overlay" id="overlay"></div>
-
+<!-- Navigation drawer -->
+<div class="drawer-backdrop" id="drawerBackdrop" onclick="toggleDrawer()"></div>
 <aside class="drawer" id="drawer">
   <div class="drawer-head">
-    <div class="brand">
-      <div class="logo">N</div>
-      <div class="brand-name">NEXUS <span>VAULT</span></div>
-    </div>
-    <button class="icon-button" id="closeDrawer">×</button>
+    <div class="brand-name">NEXUS <span>VAULT</span></div>
+    <button class="icon-btn" onclick="toggleDrawer()">×</button>
   </div>
-
-  <div class="drawer-label">MAIN WORKSPACE</div>
-  <button class="drawer-link active" data-page="home"><span class="mi">⌂</span> Dashboard</button>
-  <button class="drawer-link" data-page="wallets"><span class="mi">◈</span> Connect wallets</button>
-  <button class="drawer-link" data-page="connected"><span class="mi">▣</span> My wallets</button>
-
+  <div class="drawer-label">WORKSPACE</div>
+  <button class="nav-item selected" data-page="home" onclick="showPage('home')"><span class="nav-icon">⌂</span> Overview</button>
+  <button class="nav-item" data-page="wallets" onclick="showPage('wallets')"><span class="nav-icon">◈</span> Connect wallets</button>
+  <button class="nav-item" data-page="portfolio" onclick="showPage('portfolio')"><span class="nav-icon">▤</span> My portfolio</button>
+  <div class="drawer-label">INFORMATION</div>
+  <button class="nav-item" data-page="faq" onclick="showPage('faq')"><span class="nav-icon">?</span> Frequently asked questions</button>
+  <button class="nav-item" data-page="support" onclick="showPage('support')"><span class="nav-icon">◉</span> Support centre</button>
   <div class="drawer-label">PREFERENCES</div>
-  <button class="drawer-link" data-page="settings"><span class="mi">⚙</span> Settings</button>
-  <button class="drawer-link" data-page="about"><span class="mi">ⓘ</span> About Nexus Vault</button>
-
-  <div class="drawer-bottom">
-    NEXUS VAULT<br>
-    Your crypto. One unified workspace.<br>
-    Version 2.0
-  </div>
+  <button class="nav-item" data-page="settings" onclick="showPage('settings')"><span class="nav-icon">⚙</span> Settings</button>
+  <div class="drawer-bottom">NEXUS VAULT<br>Your crypto. One unified view.</div>
 </aside>
 
-<main class="container">
-
-<!-- DASHBOARD -->
-
-<section class="page active" id="home">
-
-  <div class="hero">
+<!-- HOME -->
+<main class="page active" id="page-home">
+  <section class="hero">
     <div class="hero-content">
-      <div class="eyebrow">THE UNIFIED CRYPTO EXPERIENCE</div>
-      <h1>Your entire crypto world.<br><span>One powerful view.</span></h1>
-      <p class="hero-description">
-        Bring your wallets together. Track your digital assets,
-        understand your portfolio and manage your crypto ecosystem
-        from one organized workspace.
-      </p>
+      <div class="eyebrow">A clearer view of your crypto</div>
+      <h1>Your entire crypto world.<br><span class="gradient-text">One powerful view.</span></h1>
+      <p>Bring your wallets together, understand your holdings, and see your digital assets from one unified dashboard.</p>
       <div class="hero-actions">
-        <button class="primary-btn" data-page="wallets">◈ &nbsp; Connect Wallets</button>
-        <button class="secondary-btn" data-page="connected">Explore My Portfolio →</button>
+        <button class="primary-btn" onclick="showPage('wallets')">Connect Wallets <span>→</span></button>
+        <button class="secondary-btn" onclick="showPage('portfolio')">Explore portfolio</button>
       </div>
+      <div class="hero-note"><span>●</span> Your keys stay with you. We never ask for seed phrases.</div>
     </div>
-    <div class="hero-art"><div class="hero-symbol">N</div></div>
-  </div>
+  </section>
 
-  <div class="section">
-    <div class="section-head">
+  <section class="portfolio-preview">
+    <div class="preview-top">
       <div>
-        <h2>Portfolio Overview</h2>
-        <p>Your combined wallet portfolio at a glance.</p>
+        <div class="preview-label">Combined portfolio value</div>
+        <div class="preview-value" id="homeTotal">$0.00</div>
+        <div class="preview-sub">USD base currency · Live portfolio data will appear after wallet integration</div>
       </div>
-      <span style="font-size:10px;color:var(--muted)">BASE: USD</span>
+      <span class="status-dot" title="Ready"></span>
     </div>
-
-    <div class="portfolio">
-      <div class="portfolio-card primary">
-        <div class="card-label">TOTAL PORTFOLIO VALUE</div>
-        <div class="total-value" id="totalUSD">$0.00</div>
-        <div class="local-value" id="totalLocal">Local value: --</div>
-        <div class="card-foot">Combined value of connected wallets · Live data pending</div>
-      </div>
-
-      <div class="portfolio-card">
-        <div class="card-label">CONNECTED WALLETS</div>
-        <div class="stat-number" id="walletCount">0</div>
-        <div class="stat-description">Wallets in your workspace</div>
-      </div>
-
-      <div class="portfolio-card">
-        <div class="card-label">ASSETS TRACKED</div>
-        <div class="stat-number" id="assetCount">0</div>
-        <div class="stat-description">Unique digital assets</div>
-      </div>
+    <div class="preview-stats">
+      <div class="stat"><span>Connected wallets</span><strong id="homeWalletCount">0</strong></div>
+      <div class="stat"><span>Assets tracked</span><strong id="homeAssetCount">0</strong></div>
+      <div class="stat"><span>Display currency</span><strong id="homeCurrency">USD</strong></div>
     </div>
-  </div>
-
-  <div class="section two-columns">
-    <div class="panel">
-      <div class="panel-heading">
-        <h3>Connected Wallets</h3>
-        <span>WALLET BREAKDOWN</span>
-      </div>
-      <div class="empty" id="walletEmpty">
-        <div class="empty-icon">◈</div>
-        <h4>Your portfolio starts here</h4>
-        <p>Connect supported wallets to view their<br>balances and combined value.</p>
-      </div>
-      <div id="walletSummary"></div>
-    </div>
-
-    <div class="panel">
-      <div class="panel-heading">
-        <h3>Asset Distribution</h3>
-        <span>PORTFOLIO</span>
-      </div>
-      <div class="empty">
-        <div class="empty-icon">◉</div>
-        <h4>No asset data available</h4>
-        <p>Your token distribution will appear<br>when wallet data is connected.</p>
-      </div>
-    </div>
-  </div>
-
-</section>
+  </section>
+</main>
 
 <!-- WALLET DIRECTORY -->
-
-<section class="page" id="wallets">
-  <button class="back-btn" data-page="home">← Back to dashboard</button>
-  <h1 class="page-title">Connect Your Wallets</h1>
-  <p class="page-subtitle">
-    Explore supported wallet providers and choose the ecosystem
-    you want to connect. Each connection must be approved in your wallet.
-  </p>
-
-  <input class="search-box" id="walletSearch"
-    placeholder="Search wallets by name or ecosystem...">
-
-  <div class="filters">
-    <button class="filter active" data-filter="all">All wallets</button>
-    <button class="filter" data-filter="ethereum">Ethereum & EVM</button>
-    <button class="filter" data-filter="solana">Solana</button>
-    <button class="filter" data-filter="bitcoin">Bitcoin</button>
-    <button class="filter" data-filter="multichain">Multichain</button>
-    <button class="filter" data-filter="cosmos">Cosmos</button>
+<main class="page" id="page-wallets">
+  <div class="page-header">
+    <div class="eyebrow">Wallet directory</div>
+    <h1 class="page-title">Connect your wallets</h1>
+    <p>Find your preferred wallet and bring your portfolio into one view. Actual wallet connection will be enabled in the integration stage.</p>
   </div>
-
+  <div class="search-box"><span>⌕</span><input id="walletSearch" type="search" placeholder="Search wallets..." oninput="renderWallets()"></div>
+  <div class="filters" id="walletFilters">
+    <button class="filter active" data-filter="All" onclick="setFilter('All',this)">All wallets</button>
+    <button class="filter" data-filter="EVM" onclick="setFilter('EVM',this)">Ethereum & EVM</button>
+    <button class="filter" data-filter="Solana" onclick="setFilter('Solana',this)">Solana</button>
+    <button class="filter" data-filter="Bitcoin" onclick="setFilter('Bitcoin',this)">Bitcoin</button>
+    <button class="filter" data-filter="Multichain" onclick="setFilter('Multichain',this)">Multichain</button>
+    <button class="filter" data-filter="Other" onclick="setFilter('Other',this)">Other networks</button>
+  </div>
   <div class="wallet-grid" id="walletGrid"></div>
+  <div class="notice" style="margin-top:22px">Wallet directory preview: selecting a wallet currently shows an integration notice. Never enter your recovery phrase or private key into this website.</div>
+</main>
 
-  <p style="font-size:10px;color:var(--muted);margin-top:20px;line-height:1.8">
-    Wallet directory preview. Actual compatibility and connection
-    support will depend on each wallet's official connection protocol.
-    NEXUS VAULT will never ask for recovery phrases or private keys.
-  </p>
-</section>
-
-<!-- CONNECTED WALLETS -->
-
-<section class="page" id="connected">
-  <button class="back-btn" data-page="home">← Back to dashboard</button>
-  <h1 class="page-title">My Wallets</h1>
-  <p class="page-subtitle">View your connected wallets and portfolio information.</p>
-  <div class="panel">
-    <div class="empty">
-      <div class="empty-icon">▣</div>
-      <h4>No wallets connected yet</h4>
-      <p>Connect your wallets to see public addresses,<br>
-      networks, balances and individual portfolio values.</p>
-      <button class="primary-btn" style="margin-top:18px" data-page="wallets">
-        Connect Wallets
-      </button>
+<!-- PORTFOLIO -->
+<main class="page" id="page-portfolio">
+  <div class="page-header">
+    <div class="eyebrow">Your assets</div>
+    <h1 class="page-title">My portfolio</h1>
+    <p>A unified overview of your connected wallets and digital assets.</p>
+  </div>
+  <div class="portfolio-preview">
+    <div class="preview-label">Total portfolio value</div>
+    <div class="preview-value" id="portfolioTotal">$0.00</div>
+    <div class="preview-sub">USD base currency</div>
+    <div class="preview-stats">
+      <div class="stat"><span>Wallets</span><strong id="portfolioWalletCount">0</strong></div>
+      <div class="stat"><span>Assets</span><strong id="portfolioAssetCount">0</strong></div>
+      <div class="stat"><span>Display currency</span><strong id="portfolioCurrency">USD</strong></div>
     </div>
   </div>
-</section>
+  <div class="panel" style="margin-top:18px">
+    <h3>Wallet breakdown</h3>
+    <p class="panel-desc">Your individual wallet balances will appear here after secure wallet integration.</p>
+    <div class="connected-empty">
+      <div class="empty-icon">◈</div>
+      <strong>No wallets connected yet</strong>
+      <p>Connect a wallet to begin building your portfolio view.</p>
+      <button class="primary-btn" onclick="showPage('wallets')">Browse wallets</button>
+    </div>
+  </div>
+  <div class="notice">No sample balances are displayed. Your portfolio will show actual public blockchain data once wallet connections and balance services are integrated.</div>
+</main>
+
+<!-- FAQ -->
+<main class="page" id="page-faq">
+  <div class="page-header">
+    <div class="eyebrow">Help centre</div>
+    <h1 class="page-title">Frequently asked questions</h1>
+    <p>Quick answers about NEXUS VAULT, wallet connections, privacy, and your portfolio.</p>
+  </div>
+  <div class="faq-list">
+    <div class="faq-item">
+      <button class="faq-question" onclick="toggleFaq(this)">What is NEXUS VAULT? <span class="faq-plus">+</span></button>
+      <div class="faq-answer">NEXUS VAULT is designed to bring information from your different crypto wallets into one unified portfolio view, helping you understand your digital assets more easily.</div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-question" onclick="toggleFaq(this)">Do I need to give you my recovery phrase? <span class="faq-plus">+</span></button>
+      <div class="faq-answer">No. Never share your seed phrase, recovery phrase, or private keys with NEXUS VAULT or anyone claiming to represent it. A legitimate wallet connection should use an official wallet approval flow.</div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-question" onclick="toggleFaq(this)">Can I connect multiple wallets? <span class="faq-plus">+</span></button>
+      <div class="faq-answer">That is a core feature being developed. The goal is to let you view supported wallets together and see their individual and combined portfolio values.</div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-question" onclick="toggleFaq(this)">Does NEXUS VAULT hold my cryptocurrency? <span class="faq-plus">+</span></button>
+      <div class="faq-answer">The intended portfolio experience is non-custodial: it displays wallet information without taking custody of your assets. Do not approve transactions you do not understand.</div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-question" onclick="toggleFaq(this)">Why can I choose a display currency? <span class="faq-plus">+</span></button>
+      <div class="faq-answer">USD is the planned base currency. A display currency setting will let you view equivalent values in another supported currency. Currency display does not require access to your wallet keys.</div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-question" onclick="toggleFaq(this)">Is wallet connection working yet? <span class="faq-plus">+</span></button>
+      <div class="faq-answer">The current version includes the interface and wallet directory. Secure wallet-provider integration and live portfolio data are still to be implemented.</div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-question" onclick="toggleFaq(this)">How do I get help? <span class="faq-plus">+</span></button>
+      <div class="faq-answer">Use the floating AI Help button for basic guidance or visit the Support Centre. Direct support contact details will be added when the official support channels are configured.</div>
+    </div>
+  </div>
+</main>
+
+<!-- SUPPORT -->
+<main class="page" id="page-support">
+  <div class="page-header">
+    <div class="eyebrow">We're here to help</div>
+    <h1 class="page-title">NEXUS support centre</h1>
+    <p>Find help with the platform, wallet setup, and portfolio features.</p>
+  </div>
+  <div class="support-grid">
+    <div class="support-card">
+      <div class="support-icon">✦</div>
+      <h3>AI Help Assistant</h3>
+      <p>Get quick guidance about NEXUS VAULT and how the platform is designed to work.</p>
+      <div class="support-status">Available from the floating help button</div>
+      <button class="secondary-btn" style="margin-top:15px" onclick="toggleAI(true)">Open AI assistant</button>
+    </div>
+    <div class="support-card">
+      <div class="support-icon">▤</div>
+      <h3>Frequently asked questions</h3>
+      <p>Read answers about wallet safety, portfolio tracking, currencies, and account features.</p>
+      <div class="support-status">Self-service help</div>
+      <button class="secondary-btn" style="margin-top:15px" onclick="showPage('faq')">Browse FAQs</button>
+    </div>
+    <div class="support-card">
+      <div class="support-icon">✉</div>
+      <h3>Email support</h3>
+      <p>Our official support email will be displayed here once configured.</p>
+      <div class="support-status">Contact address not configured</div>
+    </div>
+    <div class="support-card">
+      <div class="support-icon">◎</div>
+      <h3>Community support</h3>
+      <p>Official community and messaging links can be added here after they are created and verified.</p>
+      <div class="support-status">Community links not configured</div>
+    </div>
+  </div>
+  <div class="notice" style="margin-top:20px">Security reminder: NEXUS VAULT support will never need your recovery phrase, private key, or password to help you.</div>
+</main>
 
 <!-- SETTINGS -->
-
-<section class="page" id="settings">
-  <button class="back-btn" data-page="home">← Back to dashboard</button>
-  <h1 class="page-title">Settings</h1>
-  <p class="page-subtitle">Personalize your NEXUS VAULT experience.</p>
-
-  <div class="settings-list">
-
-    <div class="setting">
-      <div>
-        <h4>Appearance</h4>
-        <p>Switch between dark and light themes.</p>
-      </div>
-      <select id="themeSetting">
+<main class="page" id="page-settings">
+  <div class="page-header">
+    <div class="eyebrow">Preferences</div>
+    <h1 class="page-title">Settings</h1>
+    <p>Personalise the way NEXUS VAULT looks and displays information.</p>
+  </div>
+  <div class="panel">
+    <h3>Appearance and display</h3>
+    <div class="settings-row">
+      <div><strong>Theme</strong><p>Choose your preferred appearance.</p></div>
+      <select class="settings-select" id="themeSelect" onchange="setTheme(this.value)">
         <option value="dark">Dark mode</option>
         <option value="light">Light mode</option>
       </select>
     </div>
-
-    <div class="setting">
-      <div>
-        <h4>Portfolio base currency</h4>
-        <p>All portfolio accounting is calculated in USD.</p>
-      </div>
-      <strong style="font-size:12px">USD ($)</strong>
-    </div>
-
-    <div class="setting">
-      <div>
-        <h4>Local display currency</h4>
-        <p id="currencyDescription">Automatically detected from your browser region. You can change it.</p>
-      </div>
-      <select id="currencySetting">
+    <div class="settings-row">
+      <div><strong>Display currency</strong><p>USD remains the base currency. Choose the currency used for display.</p></div>
+      <select class="settings-select" id="currencySelect" onchange="setCurrency(this.value)">
+        <option value="USD">USD — US Dollar</option>
         <option value="KES">KES — Kenyan Shilling</option>
         <option value="EUR">EUR — Euro</option>
         <option value="GBP">GBP — British Pound</option>
-        <option value="USD">USD — US Dollar</option>
-        <option value="NGN">NGN — Nigerian Naira</option>
-        <option value="ZAR">ZAR — South African Rand</option>
-        <option value="INR">INR — Indian Rupee</option>
-        <option value="JPY">JPY — Japanese Yen</option>
         <option value="CAD">CAD — Canadian Dollar</option>
         <option value="AUD">AUD — Australian Dollar</option>
         <option value="CHF">CHF — Swiss Franc</option>
+        <option value="JPY">JPY — Japanese Yen</option>
         <option value="CNY">CNY — Chinese Yuan</option>
-        <option value="AED">AED — UAE Dirham</option>
-        <option value="SAR">SAR — Saudi Riyal</option>
-        <option value="GHS">GHS — Ghanaian Cedi</option>
+        <option value="INR">INR — Indian Rupee</option>
+        <option value="NGN">NGN — Nigerian Naira</option>
+        <option value="ZAR">ZAR — South African Rand</option>
         <option value="UGX">UGX — Ugandan Shilling</option>
         <option value="TZS">TZS — Tanzanian Shilling</option>
+        <option value="GHS">GHS — Ghanaian Cedi</option>
+        <option value="AED">AED — UAE Dirham</option>
+        <option value="SAR">SAR — Saudi Riyal</option>
         <option value="BRL">BRL — Brazilian Real</option>
         <option value="MXN">MXN — Mexican Peso</option>
         <option value="SGD">SGD — Singapore Dollar</option>
+        <option value="HKD">HKD — Hong Kong Dollar</option>
         <option value="NZD">NZD — New Zealand Dollar</option>
-        <option value="PHP">PHP — Philippine Peso</option>
+        <option value="SEK">SEK — Swedish Krona</option>
+        <option value="NOK">NOK — Norwegian Krone</option>
+        <option value="PLN">PLN — Polish Zloty</option>
         <option value="TRY">TRY — Turkish Lira</option>
-        <option value="KRW">KRW — South Korean Won</option>
+        <option value="PHP">PHP — Philippine Peso</option>
+        <option value="IDR">IDR — Indonesian Rupiah</option>
+        <option value="THB">THB — Thai Baht</option>
         <option value="PKR">PKR — Pakistani Rupee</option>
         <option value="BDT">BDT — Bangladeshi Taka</option>
+        <option value="EGP">EGP — Egyptian Pound</option>
+        <option value="RUB">RUB — Russian Ruble</option>
+        <option value="KRW">KRW — South Korean Won</option>
+        <option value="ILS">ILS — Israeli New Shekel</option>
+        <option value="ARS">ARS — Argentine Peso</option>
+        <option value="CLP">CLP — Chilean Peso</option>
+        <option value="COP">COP — Colombian Peso</option>
+        <option value="VND">VND — Vietnamese Dong</option>
       </select>
     </div>
-
-    <div class="setting">
-      <div>
-        <h4>Currency detection</h4>
-        <p>Uses your browser's regional settings, not your wallet credentials.</p>
-      </div>
-      <span style="font-size:10px;color:var(--green)">Enabled</span>
-    </div>
-
-    <div class="setting">
-      <div>
-        <h4>Privacy and wallet security</h4>
-        <p>Never provide recovery phrases or private keys to this website.</p>
-      </div>
-      <span style="font-size:10px;color:var(--green)">Essential</span>
-    </div>
-
   </div>
-</section>
-
-<!-- ABOUT -->
-
-<section class="page" id="about">
-  <button class="back-btn" data-page="home">← Back to dashboard</button>
-  <h1 class="page-title">About NEXUS VAULT</h1>
-  <p class="page-subtitle">Your entire crypto world. One powerful view.</p>
   <div class="panel">
-    <h3 style="font-size:16px;margin-bottom:15px">One unified crypto workspace.</h3>
-    <p style="font-size:12px;line-height:2;color:var(--muted)">
-      NEXUS VAULT is designed to help users organize their wallet
-      connections and understand their combined digital asset portfolio.
-      The platform uses user-approved wallet connections and public
-      blockchain information to display balances and portfolio values.
-      <br><br>
-      Users retain control of their wallets. Private keys and recovery
-      phrases are never required by the portfolio dashboard.
-    </p>
+    <h3>Privacy and security</h3>
+    <div class="settings-row">
+      <div><strong>Wallet safety</strong><p>NEXUS VAULT should never ask for your seed phrase or private keys.</p></div>
+      <span style="color:var(--green);font-size:12px">● Security first</span>
+    </div>
+    <div class="settings-row">
+      <div><strong>Currency detection</strong><p>Your browser's regional settings can suggest a default currency. You can change it at any time.</p></div>
+      <span style="color:var(--purple);font-size:12px">Browser locale</span>
+    </div>
   </div>
-</section>
-
 </main>
 
-<footer>
-  <div class="container footer-inner">
-    <span>© 2026 NEXUS VAULT</span>
-    <span>Your crypto. One unified view.</span>
+<footer class="footer">
+  <div>© <span id="year"></span> NEXUS VAULT. All rights reserved.</div>
+  <div class="footer-links">
+    <a href="#" onclick="showPage('faq');return false">FAQs</a>
+    <a href="#" onclick="showPage('support');return false">Support</a>
+    <a href="#" onclick="showPage('settings');return false">Settings</a>
   </div>
 </footer>
+</div>
+
+<!-- Floating AI assistant -->
+<div class="ai-tooltip" id="aiTooltip">Need a hand? Ask NEXUS AI</div>
+<button class="ai-float" onclick="toggleAI()" aria-label="Open AI help assistant">✧</button>
+
+<div class="ai-window" id="aiWindow">
+  <div class="ai-head">
+    <div><strong>✧ NEXUS AI HELP</strong><small>Platform assistant · Preview</small></div>
+    <button onclick="toggleAI(false)" style="border:0;background:none;color:white;font-size:22px">×</button>
+  </div>
+  <div class="ai-messages" id="aiMessages">
+    <div class="chat-msg bot">Hey! 👋 Welcome to NEXUS VAULT. I can help explain the platform, wallet safety, portfolio features, and settings. What would you like to know?</div>
+  </div>
+  <div class="ai-suggestions">
+    <button onclick="sendSuggestion('How do wallets work here?')">Wallet connections</button>
+    <button onclick="sendSuggestion('How is my crypto protected?')">Security</button>
+    <button onclick="sendSuggestion('How do I change currency?')">Currency settings</button>
+  </div>
+  <div class="ai-input-area">
+    <input id="aiInput" placeholder="Ask me something..." onkeydown="if(event.key==='Enter')sendAIMessage()">
+    <button onclick="sendAIMessage()">➤</button>
+  </div>
+  <div class="ai-disclaimer">Preview assistant. Not connected to a live AI service yet.</div>
+</div>
+<div class="toast" id="toast"></div>
 
 <script>
-// NAVIGATION
-
-const drawer=document.getElementById('drawer');
-const overlay=document.getElementById('overlay');
-
-function openDrawer(){
-  drawer.classList.add('active');
-  overlay.classList.add('active');
-}
-function closeDrawer(){
-  drawer.classList.remove('active');
-  overlay.classList.remove('active');
-}
-
-document.getElementById('brandMenu').onclick=openDrawer;
-document.getElementById('closeDrawer').onclick=closeDrawer;
-overlay.onclick=closeDrawer;
-
-function showPage(page){
-  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-  document.getElementById(page)?.classList.add('active');
-
-  document.querySelectorAll('.drawer-link').forEach(b=>{
-    b.classList.toggle('active',b.dataset.page===page);
-  });
-
-  closeDrawer();
-  window.scrollTo({top:0,behavior:'smooth'});
-}
-
-document.querySelectorAll('[data-page]').forEach(btn=>{
-  btn.addEventListener('click',()=>showPage(btn.dataset.page));
-});
-document.getElementById('settingsShortcut').onclick=()=>showPage('settings');
-
-// THEME - ALL COMPONENTS USE CSS VARIABLES
-
-const themeSetting=document.getElementById('themeSetting');
-
-function applyTheme(theme){
-  document.body.classList.toggle('light',theme==='light');
-  themeSetting.value=theme;
-  document.querySelector('meta[name="theme-color"]')
-    .setAttribute('content',theme==='light'?'#f4f6fb':'#090b14');
-  localStorage.setItem('nexus-theme',theme);
-}
-applyTheme(localStorage.getItem('nexus-theme')||'dark');
-
-themeSetting.addEventListener('change',e=>applyTheme(e.target.value));
-
-// CURRENCY REGION DETECTION
-
-const regionCurrencies={
-  KE:'KES',UG:'UGX',TZ:'TZS',NG:'NGN',GH:'GHS',ZA:'ZAR',
-  US:'USD',GB:'GBP',IE:'EUR',FR:'EUR',DE:'EUR',IT:'EUR',
-  ES:'EUR',PT:'EUR',NL:'EUR',BE:'EUR',AT:'EUR',FI:'EUR',
-  GR:'EUR',CY:'EUR',EE:'EUR',LV:'EUR',LT:'EUR',LU:'EUR',
-  JP:'JPY',CN:'CNY',IN:'INR',PK:'PKR',BD:'BDT',
-  CA:'CAD',AU:'AUD',NZ:'NZD',CH:'CHF',SG:'SGD',
-  AE:'AED',SA:'SAR',BR:'BRL',MX:'MXN',PH:'PHP',
-  KR:'KRW',TR:'TRY',EG:'EGP',MA:'MAD',RW:'RWF',
-  ZM:'ZMW',MW:'MWK',ET:'ETB',ID:'IDR',MY:'MYR',
-  TH:'THB',VN:'VND',HK:'HKD',NO:'NOK',SE:'SEK',
-  DK:'DKK',PL:'PLN',CZ:'CZK',HU:'HUF',RO:'RON',
-  UA:'UAH',IL:'ILS',QA:'QAR',KW:'KWD',BH:'BHD'
-};
-
-let detectedCurrency='USD';
-try{
-  const locale=new Intl.Locale(navigator.language);
-  detectedCurrency=regionCurrencies[locale.region]||'USD';
-}catch(e){}
-
-const currencySetting=document.getElementById('currencySetting');
-let localCurrency=localStorage.getItem('nexus-currency')||detectedCurrency;
-
-if(![...currencySetting.options].some(o=>o.value===localCurrency)){
-  const option=document.createElement('option');
-  option.value=localCurrency;
-  option.textContent=localCurrency;
-  currencySetting.appendChild(option);
-}
-currencySetting.value=localCurrency;
-
-document.getElementById('currencyDescription').textContent=
-  'Detected from browser region: '+detectedCurrency+
-  '. Current display currency: '+localCurrency+'.';
-
-currencySetting.addEventListener('change',()=>{
-  localCurrency=currencySetting.value;
-  localStorage.setItem('nexus-currency',localCurrency);
-  document.getElementById('currencyLabel').textContent=
-    localCurrency+' · LOCAL DISPLAY';
-  document.getElementById('currencyDescription').textContent=
-    'Your display currency is '+localCurrency+'. USD remains the base currency.';
-  updatePortfolioDisplay();
-});
-
-document.getElementById('currencyLabel').textContent=
-  localCurrency+' · LOCAL DISPLAY';
-
-// EXCHANGE RATE SOURCE
-
-let exchangeRates={USD:1};
-
-async function loadExchangeRates(){
-  try{
-    const response=await fetch('https://open.er-api.com/v6/latest/USD');
-    if(!response.ok)throw new Error('Exchange rate request failed');
-    const data=await response.json();
-    if(data.result==='success'){
-      exchangeRates=data.rates;
-      updatePortfolioDisplay();
-    }
-  }catch(error){
-    console.warn('Exchange rates unavailable. USD remains available.');
-  }
-}
-
-function formatMoney(value,currency){
-  try{
-    return new Intl.NumberFormat(undefined,{
-      style:'currency',currency:currency,
-      maximumFractionDigits:2
-    }).format(value);
-  }catch(e){
-    return currency+' '+value.toFixed(2);
-  }
-}
-
-function updatePortfolioDisplay(){
-  // Portfolio stays at zero until genuine wallet data is integrated.
-  const totalUSD=0;
-  const rate=exchangeRates[localCurrency];
-  document.getElementById('totalUSD').textContent=
-    formatMoney(totalUSD,'USD');
-
-  document.getElementById('totalLocal').textContent=
-    rate?formatMoney(totalUSD*rate,localCurrency):
-    'Local exchange rate unavailable';
-}
-
-loadExchangeRates();
-
-// WALLET DIRECTORY
-
-const wallets=[
-  ['MetaMask','ethereum','metamask','Ethereum & EVM'],
-  ['Trust Wallet','multichain','trustwallet','Multichain'],
-  ['Coinbase Wallet','multichain','coinbase','Multichain'],
-  ['Phantom','solana','phantom','Solana'],
-  ['Binance Web3','multichain','binance','Multichain'],
-  ['OKX Wallet','multichain','okx','Multichain'],
-  ['Exodus','multichain','exodus','Multichain'],
-  ['Rabby Wallet','ethereum','rabby','Ethereum & EVM'],
-  ['Rainbow','ethereum','rainbow','Ethereum & EVM'],
-  ['Ledger','multichain','ledger','Hardware wallet'],
-  ['Trezor','multichain','trezor','Hardware wallet'],
-  ['Brave Wallet','ethereum','brave','Ethereum & EVM'],
-  ['Zerion','ethereum','zerion','Ethereum & EVM'],
-  ['Argent','ethereum','argent','Ethereum & EVM'],
-  ['Safe','ethereum','safe','Ethereum & EVM'],
-  ['Solflare','solana','solflare','Solana'],
-  ['Backpack','solana','backpack','Solana'],
-  ['Glow','solana','glow','Solana'],
-  ['Keplr','cosmos','keplr','Cosmos'],
-  ['Leap Wallet','cosmos','leapwallet','Cosmos'],
-  ['Leather','bitcoin','', 'Bitcoin'],
-  ['Unisat','bitcoin','', 'Bitcoin'],
-  ['Xverse','bitcoin','', 'Bitcoin'],
-  ['Electrum','bitcoin','electrum','Bitcoin'],
-  ['imToken','multichain','', 'Multichain'],
-  ['TokenPocket','multichain','', 'Multichain'],
-  ['Bitget Wallet','multichain','bitget','Multichain'],
-  ['Crypto.com Wallet','multichain','', 'Multichain'],
-  ['MathWallet','multichain','', 'Multichain'],
-  ['Coin98','multichain','coin98','Multichain'],
-  ['Talisman','multichain','', 'Multichain'],
-  ['Enkrypt','ethereum','', 'Ethereum & EVM'],
-  ['WalletConnect','multichain','walletconnect','Multichain']
+const wallets = [
+  {name:"MetaMask",network:"EVM",symbol:"MM",slug:"metamask"},
+  {name:"Trust Wallet",network:"Multichain",symbol:"TW",slug:"trustwallet"},
+  {name:"Coinbase Wallet",network:"EVM",symbol:"CB",slug:"coinbase"},
+  {name:"Phantom",network:"Solana",symbol:"PH",slug:"phantom"},
+  {name:"Binance Web3 Wallet",network:"Multichain",symbol:"BW",slug:"binance"},
+  {name:"OKX Wallet",network:"Multichain",symbol:"OK",slug:"okx"},
+  {name:"Exodus",network:"Multichain",symbol:"EX",slug:"exodus"},
+  {name:"Rabby Wallet",network:"EVM",symbol:"RA",slug:"rabby"},
+  {name:"Rainbow",network:"EVM",symbol:"RB",slug:"rainbow"},
+  {name:"Brave Wallet",network:"EVM",symbol:"BR",slug:"brave"},
+  {name:"Zerion",network:"EVM",symbol:"ZE",slug:"zerion"},
+  {name:"Argent",network:"EVM",symbol:"AR",slug:"argent"},
+  {name:"Safe",network:"EVM",symbol:"SF",slug:"safe"},
+  {name:"Ledger",network:"Multichain",symbol:"LD",slug:"ledger"},
+  {name:"Trezor",network:"Multichain",symbol:"TZ",slug:"trezor"},
+  {name:"Solflare",network:"Solana",symbol:"SO",slug:"solflare"},
+  {name:"Backpack",network:"Solana",symbol:"BP",slug:"backpack"},
+  {name:"Glow",network:"Solana",symbol:"GL",slug:"glow"},
+  {name:"Keplr",network:"Other",symbol:"KP",slug:"keplr"},
+  {name:"Leap Wallet",network:"Other",symbol:"LP",slug:"leap"},
+  {name:"Leather",network:"Bitcoin",symbol:"LT",slug:"leather"},
+  {name:"Unisat",network:"Bitcoin",symbol:"UN",slug:"unisat"},
+  {name:"Xverse",network:"Bitcoin",symbol:"XV",slug:"xverse"},
+  {name:"Electrum",network:"Bitcoin",symbol:"EL",slug:"electrum"},
+  {name:"imToken",network:"Multichain",symbol:"IM",slug:"imtoken"},
+  {name:"TokenPocket",network:"Multichain",symbol:"TP",slug:"tokenpocket"},
+  {name:"Bitget Wallet",network:"Multichain",symbol:"BG",slug:"bitget"},
+  {name:"Crypto.com Wallet",network:"Multichain",symbol:"CD",slug:"crypto"},
+  {name:"MathWallet",network:"Multichain",symbol:"MW",slug:"mathwallet"},
+  {name:"Coin98",network:"Multichain",symbol:"C9",slug:"coin98"},
+  {name:"Talisman",network:"Other",symbol:"TA",slug:"talisman"},
+  {name:"Enkrypt",network:"EVM",symbol:"EN",slug:"enkrypt"},
+  {name:"WalletConnect",network:"Multichain",symbol:"WC",slug:"walletconnect"}
 ];
 
-const grid=document.getElementById('walletGrid');
-let currentFilter='all';
+let activeFilter = "All";
+let currentPage = "home";
 
+function showPage(name){
+  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+  const target=document.getElementById("page-"+name);
+  if(target) target.classList.add("active");
+  currentPage=name;
+  document.querySelectorAll(".nav-item").forEach(n=>{
+    n.classList.toggle("selected",n.dataset.page===name);
+  });
+  toggleDrawer(false);
+  window.scrollTo({top:0,behavior:"smooth"});
+  updatePortfolioDisplay();
+}
+function toggleDrawer(force){
+  const drawer=document.getElementById("drawer");
+  const backdrop=document.getElementById("drawerBackdrop");
+  const open=typeof force==="boolean"?force:!drawer.classList.contains("open");
+  drawer.classList.toggle("open",open);
+  backdrop.classList.toggle("show",open);
+}
+function toggleTheme(){
+  const next=document.body.classList.contains("light")?"dark":"light";
+  setTheme(next);
+}
+function setTheme(theme){
+  document.body.classList.toggle("light",theme==="light");
+  localStorage.setItem("nexus-theme",theme);
+  const select=document.getElementById("themeSelect");
+  if(select)select.value=theme;
+}
+function setCurrency(currency){
+  localStorage.setItem("nexus-currency",currency);
+  updatePortfolioDisplay();
+  showToast("Display currency set to "+currency);
+}
+function detectCurrency(){
+  const saved=localStorage.getItem("nexus-currency");
+  if(saved)return saved;
+  let region="";
+  try{region=new Intl.Locale(navigator.language).region||"";}catch(e){}
+  const map={
+    KE:"KES",UG:"UGX",TZ:"TZS",NG:"NGN",GH:"GHS",ZA:"ZAR",
+    GB:"GBP",US:"USD",CA:"CAD",AU:"AUD",NZ:"NZD",
+    IN:"INR",JP:"JPY",CN:"CNY",SG:"SGD",HK:"HKD",
+    AE:"AED",SA:"SAR",CH:"CHF",BR:"BRL",MX:"MXN",
+    PH:"PHP",ID:"IDR",TH:"THB",PK:"PKR",BD:"BDT",
+    EG:"EGP",KR:"KRW",IL:"ILS",SE:"SEK",NO:"NOK",
+    PL:"PLN",TR:"TRY",AR:"ARS",CL:"CLP",CO:"COP",
+    VN:"VND",RU:"RUB"
+  };
+  return map[region]||"USD";
+}
+function updatePortfolioDisplay(){
+  const currency=localStorage.getItem("nexus-currency")||detectCurrency();
+  const formatter=new Intl.NumberFormat(undefined,{
+    style:"currency",currency:currency,
+    maximumFractionDigits:2
+  });
+  const zero=formatter.format(0);
+  ["homeTotal","portfolioTotal"].forEach(id=>{
+    const el=document.getElementById(id);if(el)el.textContent=zero;
+  });
+  ["homeCurrency","portfolioCurrency"].forEach(id=>{
+    const el=document.getElementById(id);if(el)el.textContent=currency;
+  });
+  const select=document.getElementById("currencySelect");
+  if(select && [...select.options].some(o=>o.value===currency))select.value=currency;
+  document.getElementById("homeWalletCount").textContent="0";
+  document.getElementById("homeAssetCount").textContent="0";
+  document.getElementById("portfolioWalletCount").textContent="0";
+  document.getElementById("portfolioAssetCount").textContent="0";
+}
+function setFilter(filter,button){
+  activeFilter=filter;
+  document.querySelectorAll(".filter").forEach(b=>b.classList.remove("active"));
+  button.classList.add("active");
+  renderWallets();
+}
 function renderWallets(){
-  const query=document.getElementById('walletSearch').value.toLowerCase();
-
-  const filtered=wallets.filter(w=>{
-    const matchesCategory=currentFilter==='all'||w[1]===currentFilter;
-    return matchesCategory&&
-      (w[0].toLowerCase().includes(query)||w[3].toLowerCase().includes(query));
-  });
-
-  grid.innerHTML='';
-
-  filtered.forEach(w=>{
-    const card=document.createElement('div');
-    card.className='wallet-card';
-
-    const logo=document.createElement('div');
-    logo.className='wallet-logo';
-
-    if(w[2]){
-      const img=document.createElement('img');
-      img.src='https://cdn.simpleicons.org/'+w[2];
-      img.alt=w[0]+' logo';
-      img.onerror=()=>{
-        img.remove();
-        logo.textContent=w[0].slice(0,2).toUpperCase();
-      };
-      logo.appendChild(img);
-    }else{
-      logo.textContent=w[0].slice(0,2).toUpperCase();
-    }
-
-    const info=document.createElement('div');
-    const name=document.createElement('div');
-    name.className='wallet-name';
-    name.textContent=w[0];
-
-    const type=document.createElement('div');
-    type.className='wallet-type';
-    type.textContent=w[3];
-
-    info.append(name,type);
-    card.append(logo,info);
-    grid.appendChild(card);
-  });
-
-  if(!filtered.length){
-    grid.textContent='No wallets match your search.';
+  const query=(document.getElementById("walletSearch").value||"").toLowerCase();
+  const results=wallets.filter(w=>
+    (activeFilter==="All"||w.network===activeFilter)&&
+    w.name.toLowerCase().includes(query)
+  );
+  const grid=document.getElementById("walletGrid");
+  if(!results.length){
+    grid.innerHTML='<div class="empty-state">No wallets match your search.</div>';
+    return;
   }
+  grid.innerHTML=results.map(w=>`
+    <button class="wallet-card" onclick="walletNotice('${w.name.replace(/'/g,"\\'")}')">
+      <span class="wallet-logo">
+        <img src="https://cdn.simpleicons.org/${encodeURIComponent(w.slug)}"
+             alt="" onerror="this.style.display='none';this.parentElement.textContent='${w.symbol}'">
+      </span>
+      <span style="text-align:left"><strong>${w.name}</strong><small>${w.network} network</small></span>
+      <span class="arrow">›</span>
+    </button>
+  `).join("");
+}
+function walletNotice(name){
+  showToast(name+" integration is coming in the next development stage.");
+}
+function toggleFaq(button){
+  button.parentElement.classList.toggle("open");
+}
+function toggleAI(force){
+  const win=document.getElementById("aiWindow");
+  const open=typeof force==="boolean"?force:!win.classList.contains("open");
+  win.classList.toggle("open",open);
+  document.getElementById("aiTooltip").style.display=open?"none":"block";
+  if(open)setTimeout(()=>document.getElementById("aiInput").focus(),100);
+}
+function addChatMessage(text,type){
+  const messages=document.getElementById("aiMessages");
+  const msg=document.createElement("div");
+  msg.className="chat-msg "+type;
+  msg.textContent=text;
+  messages.appendChild(msg);
+  messages.scrollTop=messages.scrollHeight;
+}
+function sendSuggestion(text){
+  document.getElementById("aiInput").value=text;
+  sendAIMessage();
+}
+function sendAIMessage(){
+  const input=document.getElementById("aiInput");
+  const question=input.value.trim();
+  if(!question)return;
+  addChatMessage(question,"user");
+  input.value="";
+  const q=question.toLowerCase();
+  let answer="I can help with basic NEXUS VAULT guidance. Try asking about wallet connections, security, portfolio tracking, or currency settings. This preview assistant is not connected to a live AI model yet.";
+  if(q.includes("seed")||q.includes("phrase")||q.includes("private key")||q.includes("security")||q.includes("safe")){
+    answer="Never share your seed phrase, recovery phrase, or private keys with anyone. A genuine wallet connection should open an official wallet approval screen. Read every request carefully and never approve an unfamiliar transaction.";
+  }else if(q.includes("wallet")||q.includes("connect")){
+    answer="Open Connect Wallets to browse the wallet directory. The current version is a visual preview; secure connections through official wallet providers are the next development stage.";
+  }else if(q.includes("currency")||q.includes("kes")||q.includes("dollar")){
+    answer="Open the navigation drawer, choose Settings, and select your preferred display currency. USD is the intended base currency. Live conversion rates will be integrated separately.";
+  }else if(q.includes("portfolio")||q.includes("balance")||q.includes("asset")){
+    answer="The portfolio page is designed to show your combined holdings and a breakdown by wallet. Live balances and token prices will appear once the blockchain data integrations are complete.";
+  }else if(q.includes("support")||q.includes("help")){
+    answer="Visit the Support Centre from the navigation drawer. Official email and community contact details will be added once those channels are configured.";
+  }
+  setTimeout(()=>addChatMessage(answer,"bot"),350);
+}
+function showToast(message){
+  const toast=document.getElementById("toast");
+  toast.textContent=message;
+  toast.classList.add("show");
+  clearTimeout(window.toastTimer);
+  window.toastTimer=setTimeout(()=>toast.classList.remove("show"),2600);
 }
 
+document.getElementById("year").textContent=new Date().getFullYear();
+setTheme(localStorage.getItem("nexus-theme")||"dark");
+updatePortfolioDisplay();
 renderWallets();
-
-document.getElementById('walletSearch')
-  .addEventListener('input',renderWallets);
-
-document.querySelectorAll('.filter').forEach(button=>{
-  button.addEventListener('click',()=>{
-    document.querySelectorAll('.filter').forEach(b=>b.classList.remove('active'));
-    button.classList.add('active');
-    currentFilter=button.dataset.filter;
-    renderWallets();
-  });
-});
 </script>
-
 </body>
 </html>
