@@ -14,6 +14,7 @@
   --purple2:#7154e9;
   --blue:#5486ff;
   --green:#48c995;
+  --red:#e5484d;
   --shadow:0 15px 45px rgba(0,0,0,.18);
 }
 
@@ -31,6 +32,7 @@ body.light {
   --purple2:#6444d2;
   --blue:#426fe1;
   --green:#159968;
+  --red:#d13b3f;
   --shadow:0 12px 35px rgba(30,45,75,.07);
 }
 
@@ -322,8 +324,24 @@ body.light .hero{
   border:1px solid var(--border);
   padding:15px;border-radius:13px;
   min-width:0;transition:.2s;
+  cursor:pointer;position:relative;
 }
 .wallet-card:hover{border-color:var(--purple);transform:translateY(-2px)}
+.wallet-card.connecting{opacity:.6;pointer-events:none}
+.wallet-card.installed::before{
+  content:"";position:absolute;top:8px;right:8px;
+  width:7px;height:7px;border-radius:50%;
+  background:var(--green);
+  box-shadow:0 0 0 2px var(--surface);
+}
+.wallet-card.connected::after{
+  content:"✓";
+  position:absolute;top:6px;left:6px;
+  font-size:9px;font-weight:800;
+  color:white;background:var(--green);
+  width:16px;height:16px;border-radius:50%;
+  display:grid;place-items:center;
+}
 .wallet-logo{
   width:39px;height:39px;flex-shrink:0;
   border-radius:12px;
@@ -335,6 +353,136 @@ body.light .hero{
 .wallet-logo img{width:26px;height:26px;object-fit:contain}
 .wallet-name{font-size:11px;font-weight:700}
 .wallet-type{font-size:9px;color:var(--muted);margin-top:5px}
+
+.wallet-card .spinner{
+  width:14px;height:14px;flex-shrink:0;
+  border:2px solid var(--border);
+  border-top-color:var(--purple);
+  border-radius:50%;
+  animation:spin .6s linear infinite;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* INFO BANNER */
+.info-banner{
+  display:flex;gap:10px;align-items:flex-start;
+  padding:12px 15px;
+  border:1px solid var(--border);
+  border-radius:11px;
+  background:var(--surface2);
+  font-size:11px;color:var(--muted);
+  margin-bottom:15px;line-height:1.7;
+}
+.info-banner span:first-child{color:var(--purple);font-weight:800;font-size:14px}
+
+/* REFRESH BUTTON */
+.refresh-btn{
+  border:1px solid var(--border);
+  background:var(--surface2);
+  color:var(--text);
+  padding:7px 12px;
+  border-radius:8px;
+  font-size:10px;
+  font-weight:600;
+  display:inline-flex;align-items:center;gap:6px;
+  transition:.2s;
+}
+.refresh-btn:hover{border-color:var(--purple);color:var(--purple)}
+.refresh-btn.loading{opacity:.6;pointer-events:none}
+.refresh-btn.loading::before{
+  content:"";width:10px;height:10px;
+  border:2px solid var(--border);border-top-color:var(--purple);
+  border-radius:50%;animation:spin .6s linear infinite;
+}
+
+/* CONNECTED WALLETS PAGE */
+.connected-wallet-grid{
+  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:13px;
+}
+.connected-wallet-card{
+  background:var(--surface2);
+  border:1px solid var(--border);
+  border-radius:13px;padding:16px;
+  display:flex;flex-direction:column;gap:12px;
+}
+.connected-wallet-head{
+  display:flex;align-items:center;gap:12px;
+}
+.connected-wallet-info{flex:1;min-width:0}
+.connected-wallet-title{
+  display:flex;align-items:center;gap:8px;flex-wrap:wrap;
+}
+.connected-wallet-title strong{font-size:12px;font-weight:700}
+.connected-wallet-address{
+  font-size:10px;color:var(--muted);
+  font-family:'SF Mono',Monaco,monospace;
+  margin-top:4px;
+}
+.connected-wallet-balance{
+  font-size:18px;font-weight:800;letter-spacing:-.5px;
+}
+.connected-wallet-usd{
+  font-size:10px;color:var(--muted);margin-top:3px;
+}
+.connected-wallet-actions{
+  display:flex;gap:8px;align-items:center;
+  justify-content:space-between;flex-wrap:wrap;
+}
+.disconnect-btn{
+  padding:7px 12px;border-radius:8px;
+  border:1px solid var(--border);
+  background:var(--surface);
+  color:var(--text);font-size:10px;font-weight:600;
+  transition:.2s;
+}
+.disconnect-btn:hover{border-color:var(--red);color:var(--red)}
+
+/* CHAIN BADGE */
+.chain-badge{
+  display:inline-block;
+  padding:3px 8px;border-radius:6px;
+  font-size:9px;font-weight:800;
+  letter-spacing:.5px;text-transform:uppercase;
+}
+.chain-badge.ethereum{background:rgba(84,134,255,.15);color:#5486ff}
+.chain-badge.solana{background:rgba(153,69,255,.15);color:#9945ff}
+.chain-badge.bitcoin{background:rgba(247,147,26,.15);color:#f7931a}
+.chain-badge.cosmos{background:rgba(127,115,178,.18);color:#7f73b2}
+.chain-badge.multichain{background:rgba(146,117,255,.15);color:var(--purple)}
+
+/* DASHBOARD WALLET SUMMARY ROWS */
+.summary-row{
+  display:flex;align-items:center;gap:11px;
+  padding:11px 0;
+  border-bottom:1px solid var(--border);
+}
+.summary-row:last-child{border-bottom:none}
+.summary-row .wallet-logo{width:32px;height:32px;border-radius:9px;font-size:10px}
+.summary-row .wallet-logo img{width:20px;height:20px}
+.summary-row-info{flex:1;min-width:0}
+.summary-row-name{font-size:11px;font-weight:700}
+.summary-row-addr{font-size:9px;color:var(--muted);margin-top:3px;font-family:'SF Mono',Monaco,monospace}
+.summary-row-values{text-align:right}
+.summary-row-bal{font-size:11px;font-weight:700}
+.summary-row-usd{font-size:9px;color:var(--muted);margin-top:3px}
+
+/* DASHBOARD ASSET DISTRIBUTION */
+.asset-row{
+  display:flex;align-items:center;justify-content:space-between;
+  gap:10px;padding:11px 0;
+  border-bottom:1px solid var(--border);
+}
+.asset-row:last-child{border-bottom:none}
+.asset-row-left{display:flex;align-items:center;gap:10px}
+.asset-row-pct{font-size:10px;color:var(--muted)}
+.asset-row-value{font-size:11px;font-weight:700}
+.asset-bar{
+  width:100%;height:4px;border-radius:2px;
+  background:var(--surface3);
+  overflow:hidden;margin-top:6px;
+}
+.asset-bar-fill{height:100%;border-radius:2px;background:var(--purple)}
 
 /* SETTINGS */
 
@@ -413,6 +561,35 @@ footer{
   align-items:center;gap:12px;flex-wrap:wrap;
 }
 
+/* TOASTS */
+
+.toast-container{
+  position:fixed;top:90px;left:50%;
+  transform:translateX(-50%);
+  z-index:100;
+  display:flex;flex-direction:column;gap:10px;
+  pointer-events:none;
+  width:min(420px,calc(100vw - 30px));
+}
+.toast{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:11px;
+  padding:13px 16px;
+  font-size:12px;color:var(--text);
+  box-shadow:0 15px 45px rgba(0,0,0,.3);
+  pointer-events:auto;
+  animation:toastIn .3s ease;
+  line-height:1.6;
+  word-break:break-word;
+}
+.toast.success{border-left:3px solid var(--green)}
+.toast.error{border-left:3px solid var(--red)}
+.toast.info{border-left:3px solid var(--purple)}
+.toast.removing{animation:toastOut .3s ease forwards}
+@keyframes toastIn{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:translateY(0)}}
+@keyframes toastOut{to{opacity:0;transform:translateY(-10px)}}
+
 /* MOBILE */
 
 @media(max-width:850px){
@@ -431,6 +608,7 @@ footer{
   .portfolio-card.primary{grid-column:span 2}
   .two-columns{grid-template-columns:1fr}
   .wallet-grid{grid-template-columns:repeat(2,1fr)}
+  .connected-wallet-grid{grid-template-columns:1fr}
 }
 @media(max-width:390px){
   .wallet-grid{grid-template-columns:1fr}
@@ -439,7 +617,7 @@ footer{
   .hero{padding:30px 19px}
 }
 
-/* ADDED FAQ + SUPPORT - original Inter typography and theme retained */
+/* FAQ + SUPPORT */
 .faq-list{display:grid;gap:10px;max-width:850px;margin-top:24px}
 .faq-item{
   background:var(--surface);border:1px solid var(--border);
@@ -516,4 +694,5 @@ footer{
   .support-grid{grid-template-columns:1fr}
   .ai-float{right:17px;bottom:17px}
   .ai-window{right:10px;bottom:85px}
+  .toast-container{top:80px}
 }
