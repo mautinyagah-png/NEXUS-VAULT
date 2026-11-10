@@ -1,0 +1,542 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NEXUS VAULT | Wallet Connectivity</title>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+:root {
+    --bg: #080a12;
+    --surface: #101421;
+    --surface2: #151b2b;
+    --border: #222a3d;
+    --text: #f5f6ff;
+    --muted: #8d96aa;
+    --purple: #8065ff;
+    --blue: #397aff;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+}
+
+a {
+    color: inherit;
+    text-decoration: none;
+}
+
+.container {
+    width: min(1160px, 90%);
+    margin: auto;
+}
+
+/* HEADER */
+
+header {
+    border-bottom: 1px solid rgba(255,255,255,.07);
+    background: rgba(8,10,18,.95);
+}
+
+.navbar {
+    height: 82px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.logo {
+    width: 43px;
+    height: 43px;
+    border-radius: 13px;
+    background: linear-gradient(135deg, #8265ff, #397aff);
+    display: grid;
+    place-items: center;
+    font-size: 23px;
+    font-weight: 800;
+}
+
+.brand-name {
+    font-size: 19px;
+    font-weight: 800;
+    letter-spacing: 1px;
+}
+
+.brand-name span {
+    color: #927bff;
+}
+
+.nav-links {
+    display: flex;
+    gap: 32px;
+    align-items: center;
+    color: var(--muted);
+    font-size: 13px;
+}
+
+.nav-links a:hover {
+    color: white;
+}
+
+.nav-status {
+    border: 1px solid #27364b;
+    padding: 10px 15px;
+    border-radius: 30px;
+    font-size: 11px;
+    color: #83d8ac;
+}
+
+/* HERO */
+
+.hero {
+    text-align: center;
+    padding: 85px 15px 55px;
+    background:
+    radial-gradient(ellipse at 50% 0%, rgba(111,77,255,.17), transparent 55%);
+}
+
+.eyebrow {
+    display: inline-flex;
+    gap: 8px;
+    align-items: center;
+    color: #aa99ff;
+    background: rgba(128,101,255,.10);
+    border: 1px solid rgba(128,101,255,.25);
+    border-radius: 30px;
+    padding: 9px 16px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
+.hero h1 {
+    font-size: clamp(38px, 6vw, 66px);
+    line-height: 1.13;
+    letter-spacing: -2.5px;
+    margin: 25px 0 18px;
+    font-weight: 800;
+}
+
+.gradient {
+    background: linear-gradient(90deg, #a38aff, #548bff);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
+.hero p {
+    color: var(--muted);
+    font-size: 15px;
+    line-height: 1.8;
+    max-width: 590px;
+    margin: auto;
+}
+
+/* WALLET SECTION */
+
+.wallet-section {
+    padding: 20px 0 80px;
+}
+
+.section-heading {
+    text-align: center;
+    margin-bottom: 35px;
+}
+
+.section-heading h2 {
+    font-size: 25px;
+    margin-bottom: 10px;
+}
+
+.section-heading p {
+    color: var(--muted);
+    font-size: 13px;
+}
+
+.wallet-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 17px;
+}
+
+.wallet-card {
+    background: linear-gradient(145deg, #141a2a, #0e1320);
+    border: 1px solid var(--border);
+    border-radius: 17px;
+    padding: 23px 19px;
+    min-height: 166px;
+    transition: .25s ease;
+    cursor: default;
+}
+
+.wallet-card:hover {
+    border-color: #7763db;
+    transform: translateY(-3px);
+    background: #171d30;
+}
+
+.wallet-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
+    background: #20283a;
+    display: grid;
+    place-items: center;
+    font-size: 25px;
+    margin-bottom: 19px;
+}
+
+.wallet-card h3 {
+    font-size: 15px;
+    margin-bottom: 7px;
+}
+
+.wallet-card p {
+    color: var(--muted);
+    font-size: 11px;
+}
+
+.wallet-arrow {
+    float: right;
+    color: #9a88ff;
+    font-size: 17px;
+}
+
+/* INFORMATION */
+
+.info-section {
+    padding: 65px 0;
+    border-top: 1px solid rgba(255,255,255,.06);
+    border-bottom: 1px solid rgba(255,255,255,.06);
+    background: #0c101b;
+}
+
+.info-heading {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.info-heading h2 {
+    font-size: 27px;
+    margin-bottom: 12px;
+}
+
+.info-heading p {
+    color: var(--muted);
+    font-size: 13px;
+}
+
+.features {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+}
+
+.feature {
+    padding: 25px;
+    background: #111827;
+    border: 1px solid var(--border);
+    border-radius: 15px;
+}
+
+.feature-icon {
+    font-size: 24px;
+    margin-bottom: 17px;
+}
+
+.feature h3 {
+    font-size: 15px;
+    margin-bottom: 10px;
+}
+
+.feature p {
+    font-size: 12px;
+    line-height: 1.8;
+    color: var(--muted);
+}
+
+/* BOTTOM BANNER */
+
+.bottom-banner {
+    padding: 60px 20px;
+    text-align: center;
+}
+
+.bottom-banner h2 {
+    font-size: 25px;
+    margin-bottom: 12px;
+}
+
+.bottom-banner p {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.8;
+}
+
+/* FOOTER */
+
+footer {
+    border-top: 1px solid rgba(255,255,255,.07);
+    padding: 27px 0;
+}
+
+.footer-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.footer-content p {
+    color: var(--muted);
+    font-size: 11px;
+}
+
+.footer-links {
+    display: flex;
+    gap: 22px;
+    font-size: 11px;
+    color: var(--muted);
+}
+
+/* RESPONSIVE */
+
+@media(max-width: 850px) {
+    .wallet-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    .features {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media(max-width: 560px) {
+    .navbar {
+        height: 70px;
+    }
+    .nav-links {
+        display: none;
+    }
+    .brand-name {
+        font-size: 16px;
+    }
+    .nav-status {
+        font-size: 9px;
+        padding: 8px 10px;
+    }
+    .hero {
+        padding: 65px 10px 45px;
+    }
+    .hero h1 {
+        letter-spacing: -1.5px;
+    }
+    .wallet-grid {
+        gap: 11px;
+    }
+    .wallet-card {
+        padding: 17px 13px;
+        min-height: 150px;
+    }
+    .wallet-card h3 {
+        font-size: 13px;
+    }
+    .footer-content {
+        justify-content: center;
+        text-align: center;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <div class="container navbar">
+        <div class="brand">
+            <div class="logo">N</div>
+            <div class="brand-name">NEXUS <span>VAULT</span></div>
+        </div>
+
+        <nav class="nav-links">
+            <a href="#home">Home</a>
+            <a href="#wallets">Wallets</a>
+            <a href="#about">About</a>
+        </nav>
+
+        <div class="nav-status">● INTERFACE PREVIEW</div>
+    </div>
+</header>
+
+<main>
+
+<section class="hero" id="home">
+    <div class="eyebrow">
+        ✦ MULTI-WALLET CONNECTIVITY
+    </div>
+
+    <h1>
+        Your Wallets.<br>
+        <span class="gradient">One Unified Space.</span>
+    </h1>
+
+    <p>
+        Explore a unified wallet connectivity experience.
+        Choose your preferred wallet and discover a simpler
+        way to interact with your digital assets.
+    </p>
+</section>
+
+<section class="wallet-section" id="wallets">
+    <div class="container">
+
+        <div class="section-heading">
+            <h2>Select Your Wallet</h2>
+            <p>Explore the wallets supported by our platform.</p>
+        </div>
+
+        <div class="wallet-grid">
+
+            <div class="wallet-card">
+                <div class="wallet-icon">🛡️</div>
+                <span class="wallet-arrow">↗</span>
+                <h3>Trust Wallet</h3>
+                <p>Multi-chain crypto wallet</p>
+            </div>
+
+            <div class="wallet-card">
+                <div class="wallet-icon">🦊</div>
+                <span class="wallet-arrow">↗</span>
+                <h3>MetaMask</h3>
+                <p>Web3 digital wallet</p>
+            </div>
+
+            <div class="wallet-card">
+                <div class="wallet-icon">🔵</div>
+                <span class="wallet-arrow">↗</span>
+                <h3>Coinbase Wallet</h3>
+                <p>Self-custody wallet</p>
+            </div>
+
+            <div class="wallet-card">
+                <div class="wallet-icon">◎</div>
+                <span class="wallet-arrow">↗</span>
+                <h3>Phantom</h3>
+                <p>Solana ecosystem wallet</p>
+            </div>
+
+            <div class="wallet-card">
+                <div class="wallet-icon">🔷</div>
+                <span class="wallet-arrow">↗</span>
+                <h3>Binance Web3</h3>
+                <p>Web3 wallet experience</p>
+            </div>
+
+            <div class="wallet-card">
+                <div class="wallet-icon">💎</div>
+                <span class="wallet-arrow">↗</span>
+                <h3>OKX Wallet</h3>
+                <p>Multi-chain wallet</p>
+            </div>
+
+            <div class="wallet-card">
+                <div class="wallet-icon">🔐</div>
+                <span class="wallet-arrow">↗</span>
+                <h3>Ledger</h3>
+                <p>Hardware wallet</p>
+            </div>
+
+            <div class="wallet-card">
+                <div class="wallet-icon">🌐</div>
+                <span class="wallet-arrow">↗</span>
+                <h3>Other Wallets</h3>
+                <p>Explore compatible wallets</p>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<section class="info-section" id="about">
+    <div class="container">
+
+        <div class="info-heading">
+            <h2>Built Around Simplicity</h2>
+            <p>A clean approach to multi-wallet connectivity.</p>
+        </div>
+
+        <div class="features">
+
+            <div class="feature">
+                <div class="feature-icon">🔗</div>
+                <h3>Unified Connectivity</h3>
+                <p>
+                    Discover multiple wallet ecosystems through
+                    one streamlined interface.
+                </p>
+            </div>
+
+            <div class="feature">
+                <div class="feature-icon">⚡</div>
+                <h3>Simple Experience</h3>
+                <p>
+                    A straightforward interface designed to make
+                    wallet interactions easier to understand.
+                </p>
+            </div>
+
+            <div class="feature">
+                <div class="feature-icon">🔒</div>
+                <h3>User-Controlled Access</h3>
+                <p>
+                    Wallet connections require user approval.
+                    Your private keys and recovery phrases
+                    should always remain private.
+                </p>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<section class="bottom-banner">
+    <h2>Welcome to <span class="gradient">NEXUS VAULT</span></h2>
+    <p>
+        Connect. Synchronize. Explore.<br>
+        A unified experience for the Web3 ecosystem.
+    </p>
+</section>
+
+</main>
+
+<footer>
+    <div class="container footer-content">
+        <p>© 2026 NEXUS VAULT. All rights reserved.</p>
+
+        <div class="footer-links">
+            <a href="#about">About</a>
+            <a href="#wallets">Wallet Ecosystem</a>
+        </div>
+    </div>
+</footer>
+
+</body>
+</html>
