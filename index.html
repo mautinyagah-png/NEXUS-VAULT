@@ -86,7 +86,10 @@
         <h2>Portfolio Overview</h2>
         <p>Your combined wallet portfolio at a glance.</p>
       </div>
-      <span style="font-size:10px;color:var(--muted)">BASE: USD</span>
+      <div style="display:flex;gap:10px;align-items:center">
+        <span style="font-size:10px;color:var(--muted)">BASE: USD</span>
+        <button class="refresh-btn" id="refreshDashboard" title="Refresh balances">↻</button>
+      </div>
     </div>
 
     <div class="portfolio">
@@ -94,7 +97,7 @@
         <div class="card-label">TOTAL PORTFOLIO VALUE</div>
         <div class="total-value" id="totalUSD">$0.00</div>
         <div class="local-value" id="totalLocal">Local value: --</div>
-        <div class="card-foot">Combined value of connected wallets · Live data pending</div>
+        <div class="card-foot" id="portfolioFoot">Combined value of connected wallets · Live data pending</div>
       </div>
 
       <div class="portfolio-card">
@@ -130,11 +133,12 @@
         <h3>Asset Distribution</h3>
         <span>PORTFOLIO</span>
       </div>
-      <div class="empty">
+      <div class="empty" id="assetEmpty">
         <div class="empty-icon">◉</div>
         <h4>No asset data available</h4>
         <p>Your token distribution will appear<br>when wallet data is connected.</p>
       </div>
+      <div id="assetList"></div>
     </div>
   </div>
 
@@ -149,6 +153,11 @@
     Explore supported wallet providers and choose the ecosystem
     you want to connect. Each connection must be approved in your wallet.
   </p>
+
+  <div class="info-banner">
+    <span>ℹ</span>
+    <span>Wallets with a green dot are detected in your browser. Click any wallet card to connect.</span>
+  </div>
 
   <input class="search-box" id="walletSearch"
     placeholder="Search wallets by name or ecosystem...">
@@ -165,9 +174,8 @@
   <div class="wallet-grid" id="walletGrid"></div>
 
   <p style="font-size:10px;color:var(--muted);margin-top:20px;line-height:1.8">
-    Wallet directory preview. Actual compatibility and connection
-    support will depend on each wallet's official connection protocol.
     NEXUS VAULT will never ask for recovery phrases or private keys.
+    All connections use each wallet's official browser provider.
   </p>
 </section>
 
@@ -175,10 +183,19 @@
 
 <section class="page" id="connected">
   <button class="back-btn" data-page="home">← Back to dashboard</button>
-  <h1 class="page-title">My Wallets</h1>
-  <p class="page-subtitle">View your connected wallets and portfolio information.</p>
-  <div class="panel">
-    <div class="empty">
+  <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:15px;flex-wrap:wrap;margin-bottom:20px">
+    <div>
+      <h1 class="page-title">My Wallets</h1>
+      <p class="page-subtitle" style="margin:9px 0 0">View your connected wallets and portfolio information.</p>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+      <button class="refresh-btn" id="refreshWallets" title="Refresh balances">↻ Refresh</button>
+      <button class="primary-btn" data-page="wallets" style="padding:10px 16px;font-size:11px">+ Add wallet</button>
+    </div>
+  </div>
+
+  <div class="panel" id="connectedPanel">
+    <div class="empty" id="connectedEmpty">
       <div class="empty-icon">▣</div>
       <h4>No wallets connected yet</h4>
       <p>Connect your wallets to see public addresses,<br>
@@ -187,6 +204,7 @@
         Connect Wallets
       </button>
     </div>
+    <div class="connected-wallet-grid" id="connectedList"></div>
   </div>
 </section>
 
@@ -269,6 +287,14 @@
       <span style="font-size:10px;color:var(--green)">Essential</span>
     </div>
 
+    <div class="setting">
+      <div>
+        <h4>Clear connected wallets</h4>
+        <p>Removes all wallet addresses stored in this browser. Your funds remain safe.</p>
+      </div>
+      <button class="secondary-btn" id="clearAllWallets" style="color:#e5484d;border-color:var(--border)">Clear all</button>
+    </div>
+
   </div>
 </section>
 
@@ -310,19 +336,23 @@
     </details>
     <details class="faq-item">
       <summary>Can I connect multiple wallets?</summary>
-      <p>The platform is being developed to support multiple wallet connections and display each wallet alongside a combined portfolio total.</p>
+      <p>Yes. You can connect MetaMask, Phantom, Unisat and other supported wallets at the same time. Each wallet is displayed separately alongside the combined portfolio total.</p>
     </details>
     <details class="faq-item">
       <summary>Does NEXUS VAULT hold my cryptocurrency?</summary>
-      <p>The intended portfolio experience is non-custodial: it displays wallet information without taking custody of your assets. Always review wallet approval requests carefully.</p>
+      <p>No. NEXUS VAULT is non-custodial. It only reads public addresses and balances. Your wallet remains in your full control at all times.</p>
     </details>
     <details class="faq-item">
       <summary>Why can I choose a display currency?</summary>
       <p>USD is the base currency. You can choose a local display currency to see equivalent portfolio values. Currency selection does not require access to wallet credentials.</p>
     </details>
     <details class="faq-item">
-      <summary>Are wallet connections live yet?</summary>
-      <p>The current version includes the wallet directory and interface. Secure wallet-provider connections and live balances are the next development stage.</p>
+      <summary>Which wallets are supported for direct connection?</summary>
+      <p>MetaMask, Coinbase Wallet, Brave Wallet, Rabby, Phantom, Solflare, Backpack and Unisat are supported for direct connection. Other wallets will be added in future updates.</p>
+    </details>
+    <details class="faq-item">
+      <summary>How do I disconnect a wallet?</summary>
+      <p>Open "My Wallets", find the wallet you want to remove, and click Disconnect. This removes the wallet from NEXUS VAULT only — your funds are unaffected.</p>
     </details>
   </div>
 </section>
@@ -390,6 +420,8 @@
   </div>
   <div class="ai-note">Preview assistant — not connected to a live AI service yet.</div>
 </div>
+
+<div class="toast-container" id="toastContainer"></div>
 
 <script src="script.js"></script>
 </body>
