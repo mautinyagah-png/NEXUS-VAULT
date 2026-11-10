@@ -152,22 +152,13 @@
   <button class="back-btn" data-page="home">← Back to dashboard</button>
   <h1 class="page-title">Connect Your Wallets</h1>
   <p class="page-subtitle">
-    Explore supported wallet providers and choose the ecosystem
-    you want to connect. Each connection must be approved in your wallet.
+    Click any wallet to choose how you want to connect: browser extension,
+    import phrase/private key, or scan a QR code with your phone.
   </p>
-
-  <div class="connect-toolbar">
-    <button class="secondary-btn toolbar-btn" id="openImportModal">
-      <span>🔑</span> Import Phrase / Private Key
-    </button>
-    <button class="secondary-btn toolbar-btn" id="openQrModal">
-      <span>📱</span> QR Connect (Demo)
-    </button>
-  </div>
 
   <div class="info-banner">
     <span>ℹ</span>
-    <span>Wallets with a green dot are detected in your browser — click any wallet card to connect via its extension. For testing, use the import or QR options above.</span>
+    <span>Every wallet card opens a connect menu with three options. Pick the one that works for you.</span>
   </div>
 
   <input class="search-box" id="walletSearch"
@@ -185,9 +176,8 @@
   <div class="wallet-grid" id="walletGrid"></div>
 
   <p style="font-size:10px;color:var(--muted);margin-top:20px;line-height:1.8">
-    NEXUS VAULT will never ask for recovery phrases or private keys in production.
-    Browser‑provider connections use each wallet's official approval screen.
-    Phrase import is provided for local testing only.
+    NEXUS VAULT is non-custodial. Phrase import runs entirely in your browser —
+    your phrase is used to derive an address, then discarded. Only the address is saved.
   </p>
 </section>
 
@@ -285,16 +275,19 @@
 
     <div class="setting">
       <div>
-        <h4>Currency detection</h4>
-        <p>Uses your browser's regional settings, not your wallet credentials.</p>
+        <h4>WalletConnect Project ID</h4>
+        <p>Required for the QR code option. Get a free one at cloud.walletconnect.com (takes ~1 minute).</p>
       </div>
-      <span style="font-size:10px;color:var(--green)">Enabled</span>
+      <div style="display:flex;gap:8px;align-items:center">
+        <input type="text" id="wcProjectIdInput" class="settings-input" placeholder="Enter Project ID" autocomplete="off" spellcheck="false">
+        <button class="secondary-btn" id="wcProjectIdSave" style="padding:9px 14px;font-size:11px">Save</button>
+      </div>
     </div>
 
     <div class="setting">
       <div>
         <h4>Privacy and wallet security</h4>
-        <p>Never provide recovery phrases or private keys to this website.</p>
+        <p>Never provide recovery phrases or private keys to untrusted websites.</p>
       </div>
       <span style="font-size:10px;color:var(--green)">Essential</span>
     </div>
@@ -344,7 +337,11 @@
     </details>
     <details class="faq-item">
       <summary>Do I need to share my recovery phrase?</summary>
-      <p>In production, no. Never share your seed phrase, recovery phrase or private keys with this website or anyone claiming to represent it. The phrase-import feature is provided only for local testing.</p>
+      <p>For browser extension connections, no. The import feature is provided for local testing only — the phrase is used in your browser to derive an address and then discarded. Only the address is saved.</p>
+    </details>
+    <details class="faq-item">
+      <summary>How do I connect using QR code?</summary>
+      <p>Click any wallet, choose "Scan QR Code", and get a free WalletConnect Project ID from cloud.walletconnect.com. Enter it once (Settings keeps it saved), and the QR code will connect to any WalletConnect-compatible mobile wallet.</p>
     </details>
     <details class="faq-item">
       <summary>Can I connect multiple wallets?</summary>
@@ -356,11 +353,7 @@
     </details>
     <details class="faq-item">
       <summary>Why can I choose a display currency?</summary>
-      <p>USD is the base currency. You can choose a local display currency to see equivalent portfolio values. Currency selection does not require access to wallet credentials.</p>
-    </details>
-    <details class="faq-item">
-      <summary>Which wallets are supported for direct connection?</summary>
-      <p>MetaMask, Coinbase Wallet, Brave Wallet, Rabby, Phantom, Solflare, Backpack and Unisat are supported for direct connection. Other wallets will be added in future updates.</p>
+      <p>USD is the base currency. You can choose a local display currency to see equivalent portfolio values.</p>
     </details>
     <details class="faq-item">
       <summary>How do I disconnect a wallet?</summary>
@@ -433,71 +426,116 @@
   <div class="ai-note">Preview assistant — not connected to a live AI service yet.</div>
 </div>
 
-<!-- ============ IMPORT MODAL ============ -->
-<div class="modal-overlay" id="importModal">
+<!-- ============ WALLET CONNECT MODAL (per wallet) ============ -->
+<div class="modal-overlay" id="walletConnectModal">
   <div class="modal">
     <div class="modal-head">
-      <h3>🔑 Import Wallet</h3>
-      <button class="modal-close" data-close-modal="importModal" aria-label="Close">×</button>
-    </div>
-    <div class="modal-warning">
-      <strong>⚠️ Testing only.</strong>
-      Never enter a real recovery phrase on any website you don't fully control.
-      Your phrase is used <em>locally in this browser only</em> to derive an address, then immediately discarded.
-      It is <strong>never stored, logged, or transmitted</strong>. Only the derived address is kept.
-    </div>
-    <div class="modal-body">
-      <label for="importInput">12 / 15 / 18 / 21 / 24‑word recovery phrase, or a 0x‑prefixed private key:</label>
-      <textarea id="importInput" rows="4" placeholder="word1 word2 word3 …  OR  0xabc123…" spellcheck="false" autocomplete="off"></textarea>
-
-      <label class="modal-checkbox">
-        <input type="checkbox" id="importUnderstand">
-        <span>I understand this is for local testing and my phrase will not be transmitted anywhere.</span>
-      </label>
-
-      <p class="modal-hint">Derivation path used: standard Ethereum BIP44 <code>m/44'/60'/0'/0/0</code>.</p>
-
-      <div class="modal-actions">
-        <button class="secondary-btn" data-close-modal="importModal">Cancel</button>
-        <button class="primary-btn" id="importConfirm">Import &amp; Connect</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- ============ QR MODAL ============ -->
-<div class="modal-overlay" id="qrModal">
-  <div class="modal">
-    <div class="modal-head">
-      <h3>📱 QR Connect</h3>
-      <button class="modal-close" data-close-modal="qrModal" aria-label="Close">×</button>
-    </div>
-    <div class="modal-body">
-      <div class="qr-demo-badge">DEMO MODE</div>
-      <p class="qr-explain">
-        This shows what the WalletConnect QR flow looks like. Real WalletConnect requires a relay backend,
-        which is not connected yet. Use the "Simulate scan" option below to test the flow on your laptop.
-      </p>
-
-      <div id="qrContainer" aria-label="QR code"></div>
-      <p class="qr-status" id="qrDemoStatus">Waiting for wallet to scan…</p>
-
-      <div class="qr-demo-section">
-        <p><strong>Testing on laptop?</strong> Paste the address you want to simulate receiving from the scanned wallet (0x… / base58 / bc1…):</p>
-        <input type="text" id="qrDemoAddress" placeholder="0x… or base58 or bc1…" autocomplete="off" spellcheck="false">
-        <div class="modal-actions">
-          <button class="secondary-btn" data-close-modal="qrModal">Cancel</button>
-          <button class="primary-btn" id="qrDemoConfirm">Simulate scan</button>
+      <div style="display:flex;align-items:center;gap:12px">
+        <div class="wallet-logo" id="wcLogo" style="width:36px;height:36px;border-radius:10px"></div>
+        <div>
+          <h3 id="wcTitle">Connect Wallet</h3>
+          <p style="font-size:10px;color:var(--muted);margin-top:2px" id="wcSubtitle">Choose a connection method</p>
         </div>
       </div>
+      <button class="modal-close" data-close-modal="walletConnectModal" aria-label="Close">×</button>
+    </div>
+    <div class="modal-body">
+
+      <!-- Method selector -->
+      <div id="wcMethods">
+        <button class="method-btn" data-method="extension" id="wcBtnExtension">
+          <div class="method-icon">🔌</div>
+          <div class="method-text">
+            <strong>Browser Extension</strong>
+            <span id="wcExtDesc">Connect using the wallet's official browser extension</span>
+          </div>
+          <div class="method-chevron">›</div>
+        </button>
+
+        <button class="method-btn" data-method="phrase" id="wcBtnPhrase">
+          <div class="method-icon">🔑</div>
+          <div class="method-text">
+            <strong>Import Phrase / Private Key</strong>
+            <span>Paste your 12/24-word recovery phrase or 0x private key</span>
+          </div>
+          <div class="method-chevron">›</div>
+        </button>
+
+        <button class="method-btn" data-method="qr" id="wcBtnQr">
+          <div class="method-icon">📱</div>
+          <div class="method-text">
+            <strong>Scan QR Code (WalletConnect)</strong>
+            <span>Connect with this wallet on your phone</span>
+          </div>
+          <div class="method-chevron">›</div>
+        </button>
+      </div>
+
+      <!-- Extension panel -->
+      <div id="wcPanelExtension" class="method-panel hidden">
+        <button class="panel-back" data-back-methods>← Back</button>
+        <div id="wcExtStatus"></div>
+      </div>
+
+      <!-- Phrase panel -->
+      <div id="wcPanelPhrase" class="method-panel hidden">
+        <button class="panel-back" data-back-methods>← Back</button>
+
+        <div class="modal-warning" style="margin:0 0 14px">
+          <strong>⚠️ Local testing only.</strong>
+          Your phrase is used only in this browser to derive an address, then immediately discarded.
+          It is never stored, logged, or sent anywhere. Only the derived address is kept.
+        </div>
+
+        <label for="wcPhraseInput">12 / 15 / 18 / 21 / 24‑word recovery phrase, or a 0x‑prefixed private key:</label>
+        <textarea id="wcPhraseInput" rows="4" placeholder="word1 word2 word3 …  OR  0xabc123…" spellcheck="false" autocomplete="off"></textarea>
+
+        <label class="modal-checkbox">
+          <input type="checkbox" id="wcUnderstand">
+          <span>I understand this is for local testing.</span>
+        </label>
+
+        <p class="modal-hint">Derivation path: <code>m/44'/60'/0'/0/0</code> (standard Ethereum BIP44).</p>
+
+        <div id="wcPhraseStatus"></div>
+
+        <div class="modal-actions">
+          <button class="secondary-btn" data-back-methods>Cancel</button>
+          <button class="primary-btn" id="wcImportConfirm">Import &amp; Connect</button>
+        </div>
+      </div>
+
+      <!-- QR panel -->
+      <div id="wcPanelQr" class="method-panel hidden">
+        <button class="panel-back" data-back-methods>← Back</button>
+
+        <div id="wcQrContent">
+          <!-- Filled by JS -->
+        </div>
+      </div>
+
     </div>
   </div>
 </div>
 
 <div class="toast-container" id="toastContainer"></div>
 
+<!-- ethers.js with fallback CDNs -->
 <script src="https://cdn.jsdelivr.net/npm/ethers@6.13.4/dist/ethers.umd.min.js"></script>
+<script>
+  if (typeof window.ethers === 'undefined') {
+    document.write('<script src="https://unpkg.com/ethers@6.13.4/dist/ethers.umd.min.js"><\/script>');
+  }
+</script>
+<script>
+  if (typeof window.ethers === 'undefined') {
+    document.write('<script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.13.4/ethers.umd.min.js"><\/script>');
+  }
+</script>
+
+<!-- QR code generator -->
 <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+
 <script src="script.js"></script>
 </body>
 </html>
