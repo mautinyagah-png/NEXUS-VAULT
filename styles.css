@@ -487,7 +487,7 @@ body.light .hero{
   font-family:'SF Mono',Monaco,monospace;
 }
 
-/* DRAWER — FIXED: no overlap */
+/* DRAWER */
 
 .overlay{
   position:fixed;inset:0;background:#0009;
@@ -544,8 +544,6 @@ body.light .hero{
   color:var(--text);background:var(--surface3);
 }
 .drawer-link .mi{font-size:17px;width:22px;text-align:center}
-
-/* FIX: pinned bottom, never overlaps, has background + subtle shadow */
 .drawer-bottom{
   flex:0 0 auto;
   position:relative;
@@ -753,9 +751,7 @@ footer{
   flex-shrink:0;
 }
 
-.method-panel{
-  animation:fadeIn .2s ease;
-}
+.method-panel{animation:fadeIn .2s ease}
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
 
 .panel-back{
@@ -820,11 +816,8 @@ footer{
   font-family:'SF Mono',Monaco,monospace;
   margin-bottom:10px;
 }
-.qr-setup .row{
-  display:flex;gap:8px;
-}
+.qr-setup .row{display:flex;gap:8px}
 
-/* Spinner in modals */
 .spinner-inline{
   display:inline-block;
   width:14px;height:14px;
