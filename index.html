@@ -441,7 +441,6 @@
     </div>
     <div class="modal-body">
 
-      <!-- Method selector -->
       <div id="wcMethods">
         <button class="method-btn" data-method="extension" id="wcBtnExtension">
           <div class="method-icon">🔌</div>
@@ -471,13 +470,11 @@
         </button>
       </div>
 
-      <!-- Extension panel -->
       <div id="wcPanelExtension" class="method-panel hidden">
         <button class="panel-back" data-back-methods>← Back</button>
         <div id="wcExtStatus"></div>
       </div>
 
-      <!-- Phrase panel -->
       <div id="wcPanelPhrase" class="method-panel hidden">
         <button class="panel-back" data-back-methods>← Back</button>
 
@@ -505,13 +502,9 @@
         </div>
       </div>
 
-      <!-- QR panel -->
       <div id="wcPanelQr" class="method-panel hidden">
         <button class="panel-back" data-back-methods>← Back</button>
-
-        <div id="wcQrContent">
-          <!-- Filled by JS -->
-        </div>
+        <div id="wcQrContent"></div>
       </div>
 
     </div>
@@ -519,22 +512,6 @@
 </div>
 
 <div class="toast-container" id="toastContainer"></div>
-
-<!-- ethers.js with fallback CDNs -->
-<script src="https://cdn.jsdelivr.net/npm/ethers@6.13.4/dist/ethers.umd.min.js"></script>
-<script>
-  if (typeof window.ethers === 'undefined') {
-    document.write('<script src="https://unpkg.com/ethers@6.13.4/dist/ethers.umd.min.js"><\/script>');
-  }
-</script>
-<script>
-  if (typeof window.ethers === 'undefined') {
-    document.write('<script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.13.4/ethers.umd.min.js"><\/script>');
-  }
-</script>
-
-<!-- QR code generator -->
-<script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
 
 <script src="script.js"></script>
 </body>
