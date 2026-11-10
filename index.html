@@ -37,18 +37,20 @@
     <button class="icon-button" id="closeDrawer">×</button>
   </div>
 
-  <div class="drawer-label">MAIN WORKSPACE</div>
-  <button class="drawer-link active" data-page="home"><span class="mi">⌂</span> Dashboard</button>
-  <button class="drawer-link" data-page="wallets"><span class="mi">◈</span> Connect wallets</button>
-  <button class="drawer-link" data-page="connected"><span class="mi">▣</span> My wallets</button>
+  <div class="drawer-scroll">
+    <div class="drawer-label">MAIN WORKSPACE</div>
+    <button class="drawer-link active" data-page="home"><span class="mi">⌂</span> Dashboard</button>
+    <button class="drawer-link" data-page="wallets"><span class="mi">◈</span> Connect wallets</button>
+    <button class="drawer-link" data-page="connected"><span class="mi">▣</span> My wallets</button>
 
-  <div class="drawer-label">PREFERENCES</div>
-  <button class="drawer-link" data-page="settings"><span class="mi">⚙</span> Settings</button>
-  <button class="drawer-link" data-page="about"><span class="mi">ⓘ</span> About Nexus Vault</button>
+    <div class="drawer-label">PREFERENCES</div>
+    <button class="drawer-link" data-page="settings"><span class="mi">⚙</span> Settings</button>
+    <button class="drawer-link" data-page="about"><span class="mi">ⓘ</span> About Nexus Vault</button>
 
-  <div class="drawer-label">HELP & SUPPORT</div>
-  <button class="drawer-link" data-page="faq"><span class="mi">?</span> Frequently asked questions</button>
-  <button class="drawer-link" data-page="support"><span class="mi">✉</span> Support centre</button>
+    <div class="drawer-label">HELP & SUPPORT</div>
+    <button class="drawer-link" data-page="faq"><span class="mi">?</span> Frequently asked questions</button>
+    <button class="drawer-link" data-page="support"><span class="mi">✉</span> Support centre</button>
+  </div>
 
   <div class="drawer-bottom">
     NEXUS VAULT<br>
@@ -154,9 +156,18 @@
     you want to connect. Each connection must be approved in your wallet.
   </p>
 
+  <div class="connect-toolbar">
+    <button class="secondary-btn toolbar-btn" id="openImportModal">
+      <span>🔑</span> Import Phrase / Private Key
+    </button>
+    <button class="secondary-btn toolbar-btn" id="openQrModal">
+      <span>📱</span> QR Connect (Demo)
+    </button>
+  </div>
+
   <div class="info-banner">
     <span>ℹ</span>
-    <span>Wallets with a green dot are detected in your browser. Click any wallet card to connect.</span>
+    <span>Wallets with a green dot are detected in your browser — click any wallet card to connect via its extension. For testing, use the import or QR options above.</span>
   </div>
 
   <input class="search-box" id="walletSearch"
@@ -174,8 +185,9 @@
   <div class="wallet-grid" id="walletGrid"></div>
 
   <p style="font-size:10px;color:var(--muted);margin-top:20px;line-height:1.8">
-    NEXUS VAULT will never ask for recovery phrases or private keys.
-    All connections use each wallet's official browser provider.
+    NEXUS VAULT will never ask for recovery phrases or private keys in production.
+    Browser‑provider connections use each wallet's official approval screen.
+    Phrase import is provided for local testing only.
   </p>
 </section>
 
@@ -332,7 +344,7 @@
     </details>
     <details class="faq-item">
       <summary>Do I need to share my recovery phrase?</summary>
-      <p>No. Never share your seed phrase, recovery phrase or private keys with this website or anyone claiming to represent it.</p>
+      <p>In production, no. Never share your seed phrase, recovery phrase or private keys with this website or anyone claiming to represent it. The phrase-import feature is provided only for local testing.</p>
     </details>
     <details class="faq-item">
       <summary>Can I connect multiple wallets?</summary>
@@ -421,8 +433,71 @@
   <div class="ai-note">Preview assistant — not connected to a live AI service yet.</div>
 </div>
 
+<!-- ============ IMPORT MODAL ============ -->
+<div class="modal-overlay" id="importModal">
+  <div class="modal">
+    <div class="modal-head">
+      <h3>🔑 Import Wallet</h3>
+      <button class="modal-close" data-close-modal="importModal" aria-label="Close">×</button>
+    </div>
+    <div class="modal-warning">
+      <strong>⚠️ Testing only.</strong>
+      Never enter a real recovery phrase on any website you don't fully control.
+      Your phrase is used <em>locally in this browser only</em> to derive an address, then immediately discarded.
+      It is <strong>never stored, logged, or transmitted</strong>. Only the derived address is kept.
+    </div>
+    <div class="modal-body">
+      <label for="importInput">12 / 15 / 18 / 21 / 24‑word recovery phrase, or a 0x‑prefixed private key:</label>
+      <textarea id="importInput" rows="4" placeholder="word1 word2 word3 …  OR  0xabc123…" spellcheck="false" autocomplete="off"></textarea>
+
+      <label class="modal-checkbox">
+        <input type="checkbox" id="importUnderstand">
+        <span>I understand this is for local testing and my phrase will not be transmitted anywhere.</span>
+      </label>
+
+      <p class="modal-hint">Derivation path used: standard Ethereum BIP44 <code>m/44'/60'/0'/0/0</code>.</p>
+
+      <div class="modal-actions">
+        <button class="secondary-btn" data-close-modal="importModal">Cancel</button>
+        <button class="primary-btn" id="importConfirm">Import &amp; Connect</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ QR MODAL ============ -->
+<div class="modal-overlay" id="qrModal">
+  <div class="modal">
+    <div class="modal-head">
+      <h3>📱 QR Connect</h3>
+      <button class="modal-close" data-close-modal="qrModal" aria-label="Close">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="qr-demo-badge">DEMO MODE</div>
+      <p class="qr-explain">
+        This shows what the WalletConnect QR flow looks like. Real WalletConnect requires a relay backend,
+        which is not connected yet. Use the "Simulate scan" option below to test the flow on your laptop.
+      </p>
+
+      <div id="qrContainer" aria-label="QR code"></div>
+      <p class="qr-status" id="qrDemoStatus">Waiting for wallet to scan…</p>
+
+      <div class="qr-demo-section">
+        <p><strong>Testing on laptop?</strong> Paste the address you want to simulate receiving from the scanned wallet (0x… / base58 / bc1…):</p>
+        <input type="text" id="qrDemoAddress" placeholder="0x… or base58 or bc1…" autocomplete="off" spellcheck="false">
+        <div class="modal-actions">
+          <button class="secondary-btn" data-close-modal="qrModal">Cancel</button>
+          <button class="primary-btn" id="qrDemoConfirm">Simulate scan</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div class="toast-container" id="toastContainer"></div>
 
+<script src="https://cdn.jsdelivr.net/npm/ethers@6.13.4/dist/ethers.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
 <script src="script.js"></script>
 </body>
 </html>
