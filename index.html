@@ -54,7 +54,7 @@
   </div>
 
   <div class="drawer-bottom">
-    NEXUS VAULT · v2.1<br>
+    NEXUS VAULT · v2.2<br>
     Your crypto. One unified workspace.
   </div>
 </aside>
@@ -80,7 +80,6 @@
       </div>
     </div>
 
-    <!-- Animated hero chains matching the logo -->
     <div class="hero-art" aria-hidden="true">
       <div class="hero-art-glow"></div>
       <svg class="hero-chains" viewBox="0 0 300 300">
@@ -117,7 +116,6 @@
     </div>
   </div>
 
-  <!-- Trust bar -->
   <div class="trust-bar">
     <div class="trust-item"><span class="trust-icon">🔒</span> Non-custodial</div>
     <div class="trust-item"><span class="trust-icon">✓</span> No seed phrases required</div>
@@ -125,7 +123,6 @@
     <div class="trust-item"><span class="trust-icon">⚡</span> Live blockchain data</div>
   </div>
 
-  <!-- Live price strip -->
   <div class="price-strip" id="priceStrip">
     <div class="price-item" data-coin="ETH">
       <div class="price-icon-coin">Ξ</div>
@@ -223,13 +220,13 @@
   <button class="back-btn" data-page="home">← Back to dashboard</button>
   <h1 class="page-title">Connect Your Wallets</h1>
   <p class="page-subtitle">
-    Click any wallet in <strong>Connectable Now</strong> to choose your connection method.
-    Wallets in <strong>Coming Soon</strong> are recognised but not yet directly supported.
+    Click any wallet in <strong>Connectable Now</strong> to connect.
+    Don't have it installed? Click the <strong>↗</strong> on any card to visit the official download page, install it, then refresh and it becomes connectable.
   </p>
 
   <div class="info-banner">
     <span>ℹ</span>
-    <span>Wallets with a green dot are detected in this browser. Trust Wallet, MetaMask, Coinbase, Brave, Rabby, Phantom, Solflare, Backpack and Unisat are all connectable.</span>
+    <span>Green dot = detected in this browser. Click any card in Connectable Now to connect. Click ↗ on any card for the wallet's official site.</span>
   </div>
 
   <input class="search-box" id="walletSearch"
@@ -249,7 +246,7 @@
   <div class="wallet-grid" id="walletGridConnectable"></div>
 
   <h2 class="wallet-section-title" style="margin-top:32px">⏳ Coming Soon</h2>
-  <p class="wallet-section-desc">These wallets are in the directory but their direct connection is not yet integrated.</p>
+  <p class="wallet-section-desc">These wallets are in the directory but not yet directly connectable. Click ↗ to install them from their official site — after installing, refresh and they'll appear above.</p>
   <div class="wallet-grid" id="walletGridComingSoon"></div>
 
   <p style="font-size:10px;color:var(--muted);margin-top:24px;line-height:1.8">
@@ -418,6 +415,9 @@
       <br><br>
       Users retain control of their wallets. Private keys and recovery
       phrases are never required by the portfolio dashboard.
+      <br><br>
+      Questions? Email us at
+      <a href="mailto:nexusvault@gmail.com" style="color:var(--purple);font-weight:600">nexusvault@gmail.com</a>.
     </p>
   </div>
 </section>
@@ -433,6 +433,10 @@
     <details class="faq-item">
       <summary>What is NEXUS VAULT?</summary>
       <p>NEXUS VAULT is designed to bring information from your different crypto wallets into one unified portfolio view.</p>
+    </details>
+    <details class="faq-item">
+      <summary>How do I install a wallet I don't have?</summary>
+      <p>Open Connect Wallets. Every wallet card has a small ↗ button in the top-right corner that opens the wallet's official download page. Install it, refresh NEXUS VAULT, and the wallet will appear with a green dot and become connectable.</p>
     </details>
     <details class="faq-item">
       <summary>Do I need to share my recovery phrase?</summary>
@@ -466,6 +470,10 @@
       <summary>How do I disconnect a wallet?</summary>
       <p>Open "My Wallets", find the wallet you want to remove, and click Disconnect. This removes the wallet from NEXUS VAULT only — your funds are unaffected.</p>
     </details>
+    <details class="faq-item">
+      <summary>How do I contact support?</summary>
+      <p>Email us at nexusvault@gmail.com. We typically respond within 24 hours.</p>
+    </details>
   </div>
 </section>
 
@@ -473,7 +481,7 @@
 <section class="page" id="support">
   <button class="back-btn" data-page="home">← Back to dashboard</button>
   <h1 class="page-title">Support Centre</h1>
-  <p class="page-subtitle">Need help using NEXUS VAULT? Start with the AI help assistant or browse the FAQs.</p>
+  <p class="page-subtitle">Need help using NEXUS VAULT? Start with the AI help assistant, browse the FAQs, or email us directly.</p>
 
   <div class="support-grid">
     <div class="support-card">
@@ -491,8 +499,12 @@
     <div class="support-card">
       <div class="support-icon">✉</div>
       <h3>Contact Support</h3>
-      <p>Official support contact details will be published here once the NEXUS VAULT support email or contact channel is configured.</p>
-      <div class="support-status">Official contact details coming soon</div>
+      <p>Email our team directly. We typically respond within 24 hours.</p>
+      <a href="mailto:nexusvault@gmail.com?subject=NEXUS%20VAULT%20Support%20Request" class="support-email-btn">
+        <span>✉</span>
+        nexusvault@gmail.com
+      </a>
+      <div class="support-status">Usually responds within 24 hours</div>
     </div>
     <div class="support-card">
       <div class="support-icon">盾</div>
@@ -508,15 +520,17 @@
 <footer>
   <div class="container footer-inner">
     <div style="display:flex;flex-direction:column;gap:6px">
-      <span>© 2026 NEXUS VAULT · v2.1</span>
+      <span>© 2026 NEXUS VAULT · v2.2</span>
       <span style="display:flex;align-items:center;gap:6px;font-size:9px">
         <span class="status-dot"></span> All systems operational
       </span>
+      <a href="mailto:nexusvault@gmail.com" style="color:var(--muted);text-decoration:none;font-size:10px">✉ nexusvault@gmail.com</a>
     </div>
     <div class="footer-links">
       <a href="#" data-page="faq">FAQ</a>
       <a href="#" data-page="support">Support</a>
       <a href="#" data-page="about">About</a>
+      <a href="mailto:nexusvault@gmail.com">Contact</a>
       <a href="#" onclick="return false" title="Terms page coming soon">Terms</a>
       <a href="#" onclick="return false" title="Privacy page coming soon">Privacy</a>
     </div>
